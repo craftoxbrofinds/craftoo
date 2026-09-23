@@ -43,23 +43,20 @@ export default function SignUpPage() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-[#faf9f6] px-4">
+        <div className="min-h-screen flex items-center justify-center bg-[#fffbf7] px-4 py-10">
 
-            <div className="w-full max-w-md bg-white shadow-xl p-10 rounded-2xl border border-gray-100">
+            <div className="w-full max-w-md rounded-2xl border border-[#e8e0e7] bg-white p-7 shadow-[0_18px_55px_rgba(126,106,168,0.12)] sm:p-10">
 
                 {/* Brand */}
-                <h1 className="text-3xl font-serif text-center text-warm-black mb-2">
-                    Brofinds
-                </h1>
-
-                <p className="text-center text-sm tracking-widest text-gray-500 mb-8 uppercase">
-                    Create your account
-                </p>
+                <img src="/images/logo/craftoo-logo.png" alt="Craftoo" className="mx-auto h-16 w-44 object-contain mix-blend-multiply" />
+                <p className="mt-4 text-center font-syndicatgrotesk text-[10px] font-semibold tracking-[0.24em] text-[#7e6aa8] uppercase">Made for thoughtful moments</p>
+                <h1 className="mt-2 text-center font-brandon text-3xl font-bold text-[#403a38]">Create your account</h1>
+                <p className="mt-2 mb-8 text-center font-syndicatgrotesk text-sm text-[#756e6b]">Save your favourites and make gifting easy.</p>
 
                 <form onSubmit={handleSignUp}>
                 {/* Email */}
                 <div className="mb-4">
-                    <label className="text-xs uppercase tracking-widest text-foreground-light">
+                    <label className="font-syndicatgrotesk text-[10px] font-semibold uppercase tracking-[0.18em] text-[#756e6b]">
                         Email
                     </label>
                     <input
@@ -69,17 +66,13 @@ export default function SignUpPage() {
                         placeholder="you@example.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="flex w-full rounded-md border border-control bg-foreground/[.026] placeholder:text-foreground-muted
-                        text-sm leading-4 px-3 py-2 h-[34px]
-                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-background-control
-                        focus-visible:ring-offset-2 focus-visible:ring-offset-foreground-muted
-                        border-strong"
+                        className="mt-2 h-11 w-full rounded-xl border border-[#e8e0e7] bg-[#fffbf7] px-3 text-sm text-[#403a38] placeholder:text-[#a39b9c] focus:border-[#b5a1d2] focus:outline-none focus:ring-4 focus:ring-[#e8ddf2]/60"
                     />
                 </div>
 
                 {/* Password */}
                 <div className="mb-4">
-                    <label className="text-xs uppercase tracking-widest text-foreground-light">
+                    <label className="font-syndicatgrotesk text-[10px] font-semibold uppercase tracking-[0.18em] text-[#756e6b]">
                         Password
                     </label>
                     <input
@@ -89,17 +82,13 @@ export default function SignUpPage() {
                         placeholder="••••••••"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="flex w-full rounded-md border border-control bg-foreground/[.026] placeholder:text-foreground-muted
-                        text-sm leading-4 px-3 py-2 h-[34px]
-                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-background-control
-                        focus-visible:ring-offset-2 focus-visible:ring-offset-foreground-muted
-                        border-strong"
+                        className="mt-2 h-11 w-full rounded-xl border border-[#e8e0e7] bg-[#fffbf7] px-3 text-sm text-[#403a38] placeholder:text-[#a39b9c] focus:border-[#b5a1d2] focus:outline-none focus:ring-4 focus:ring-[#e8ddf2]/60"
                     />
                 </div>
 
                 {/* Confirm Password */}
                 <div className="mb-6">
-                    <label className="text-xs uppercase tracking-widest text-foreground-light">
+                    <label className="font-syndicatgrotesk text-[10px] font-semibold uppercase tracking-[0.18em] text-[#756e6b]">
                         Confirm Password
                     </label>
                     <input
@@ -109,11 +98,7 @@ export default function SignUpPage() {
                         placeholder="••••••••"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
-                        className={`flex w-full rounded-md border bg-foreground/[.026] placeholder:text-foreground-muted
-                        text-sm leading-4 px-3 py-2 h-[34px]
-                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-background-control
-                        focus-visible:ring-offset-2 focus-visible:ring-offset-foreground-muted
-                        ${confirmPassword && password !== confirmPassword ? 'border-red-400' : 'border-control border-strong'}`}
+                        className={`mt-2 h-11 w-full rounded-xl border bg-[#fffbf7] px-3 text-sm text-[#403a38] placeholder:text-[#a39b9c] focus:border-[#b5a1d2] focus:outline-none focus:ring-4 focus:ring-[#e8ddf2]/60 ${confirmPassword && password !== confirmPassword ? 'border-red-400' : 'border-[#e8e0e7]'}`}
                     />
                     {confirmPassword && password !== confirmPassword && (
                         <p className="text-red-500 text-xs mt-1">Passwords do not match</p>
@@ -122,33 +107,33 @@ export default function SignUpPage() {
 
                 {/* Error */}
                 {error && (
-                    <p className="text-red-500 text-sm mb-3 text-center">{error}</p>
+                    <p className="mb-3 rounded-lg bg-red-50 px-3 py-2 text-center font-syndicatgrotesk text-sm text-red-600">{error}</p>
                 )}
 
                 {/* Success */}
                 {success && (
-                    <p className="text-green-600 text-sm mb-3 text-center">{success}</p>
+                    <p className="mb-3 rounded-lg bg-green-50 px-3 py-2 text-center font-syndicatgrotesk text-sm text-green-700">{success}</p>
                 )}
 
                 {/* Button */}
                 <button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-yellow-600 text-white py-3 rounded-lg tracking-widest uppercase text-sm hover:bg-yellow-700 transition disabled:opacity-60"
+                    className="w-full rounded-full bg-[#7e6aa8] py-3.5 font-syndicatgrotesk text-[10px] font-bold tracking-[0.2em] text-white uppercase shadow-[0_8px_20px_rgba(126,106,168,0.2)] transition hover:bg-[#67548e] disabled:opacity-60"
                 >
                     {loading ? 'Creating Account...' : 'Sign Up'}
                 </button>
                 </form>
 
                 {/* Divider */}
-                <div className="text-center my-6 text-gray-400 text-sm">
+                <div className="my-6 text-center font-syndicatgrotesk text-xs text-[#a39b9c]">
                     or
                 </div>
 
                 {/* Sign in link */}
-                <p className="text-center text-sm text-gray-600">
+                <p className="text-center font-syndicatgrotesk text-sm text-[#756e6b]">
                     Already have an account?{' '}
-                    <a href="/signin" className="text-yellow-600 hover:underline">
+                    <a href="/signin" className="font-semibold text-[#7e6aa8] hover:underline">
                         Sign in
                     </a>
                 </p>

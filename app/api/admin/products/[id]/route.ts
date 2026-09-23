@@ -1,5 +1,6 @@
 import { ProductService } from '@/services/product.service'
 import { isAdmin } from '@/lib/auth'
+import { createAdminClient } from '@/lib/supabase-admin'
 
 type RouteContext = { params: Promise<{ id: string }> }
 
@@ -8,7 +9,7 @@ export async function GET(req: Request, { params }: RouteContext) {
 
   try {
     const { id } = await params
-    const { data, error } = await ProductService.getProductById(id)
+    const { data, error } = await ProductService.getProductById(id, createAdminClient())
     if (error) return Response.json({ error: error.message }, { status: 400 })
     return Response.json({ data })
   } catch (e: any) {
@@ -35,7 +36,7 @@ export async function PUT(req: Request, { params }: RouteContext) {
     if (weight !== undefined) payload.weight = weight
     if (is_active !== undefined) payload.is_active = is_active
 
-    await ProductService.updateProduct(id, payload)
+    await ProductService.updateProduct(id, payload, createAdminClient())
     return Response.json({ success: true })
   } catch (e: any) {
     return Response.json({ error: e.message }, { status: 500 })
@@ -47,7 +48,7 @@ export async function DELETE(req: Request, { params }: RouteContext) {
 
   try {
     const { id } = await params
-    await ProductService.deleteProduct(id)
+    await ProductService.deleteProduct(id, createAdminClient())
     return Response.json({ success: true })
   } catch (e: any) {
     return Response.json({ error: e.message }, { status: 500 })

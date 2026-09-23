@@ -1,5 +1,5 @@
 import { isAdmin } from '@/lib/auth'
-import { supabase } from '@/lib/supabase'
+import { createAdminClient } from '@/lib/supabase-admin'
 
 export async function PUT(req: Request) {
   if (!(await isAdmin(req))) return Response.json({ error: 'Unauthorized' }, { status: 401 })
@@ -8,6 +8,7 @@ export async function PUT(req: Request) {
   // updates: { id: string, sort_order: number }[]
   if (!Array.isArray(updates)) return Response.json({ error: 'Invalid payload' }, { status: 400 })
 
+  const supabase = createAdminClient()
   const results = await Promise.all(
     updates.map(({ id, sort_order }: { id: string; sort_order: number }) =>
       supabase.from('products').update({ sort_order }).eq('id', id)

@@ -1,14 +1,11 @@
 import { NextResponse } from 'next/server'
 import { isAdmin } from '@/lib/auth'
-import { createClient } from '@supabase/supabase-js'
-
-const adminSupabase = () =>
-  createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
+import { createAdminClient } from '@/lib/supabase-admin'
 
 export async function GET(req: Request) {
   if (!(await isAdmin(req))) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const supabase = adminSupabase()
+  const supabase = createAdminClient()
   const { data, error } = await supabase
     .from('categories')
     .select('id, name, slug, is_active, image, sort_order, created_at')
@@ -27,7 +24,7 @@ export async function POST(req: Request) {
 
   if (!name?.trim()) return NextResponse.json({ error: 'Name is required' }, { status: 400 })
 
-  const supabase = adminSupabase()
+  const supabase = createAdminClient()
   const { data, error } = await supabase
     .from('categories')
     .insert([{

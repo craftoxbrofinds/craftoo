@@ -119,7 +119,7 @@ export function CartDrawer() {
                     Your cart is empty
                   </p>
                   <p className="font-syndicatgrotesk text-xs text-text-muted leading-relaxed">
-                    Explore our collections and add jewellery you love
+                    Explore our collections and add something made with love
                   </p>
                 </div>
                 <button
@@ -159,7 +159,7 @@ export function CartDrawer() {
                               {item.product.name}
                             </h3>
                             <p className="font-syndicatgrotesk text-[10px] text-text-muted mt-0.5 tracking-wide">
-                              {/* Handcrafted Jewelry */}
+                              {/* Handmade gift details */}
                             </p>
                           </div>
                           <button
@@ -257,7 +257,7 @@ export function CartDrawer() {
 
               {/* Trust note */}
               <p className="text-center font-syndicatgrotesk text-[9px] tracking-[0.1em] text-muted-taupe">
-                🔒 Secure checkout · Free returns · Certified Quality
+                🔒 Secure checkout · Free returns · Handmade with care
               </p>
             </div>
           )}

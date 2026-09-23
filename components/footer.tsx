@@ -18,7 +18,7 @@ const TRUST = [
   { icon: '✦', label: 'Free Shipping' },
   { icon: '✦', label: 'Cash on Delivery' },
   { icon: '✦', label: '7-Day Returns' },
-  { icon: '✦', label: 'Certified Quality' },
+  { icon: '✦', label: 'Handmade With Care' },
 ]
 
 function InstagramIcon() {
@@ -74,7 +74,7 @@ export function Footer() {
   const storeName = brand.name || 'My Store'
 
   return (
-    <footer className="relative bg-[#0d0b07] border-t border-[#B8860B]/20 overflow-hidden">
+    <footer className="relative bg-[#f1eaf8] border-t border-[#dccff0] overflow-hidden">
 
       {/* Ambient gold glows */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_center,rgba(184,134,11,0.10),transparent_55%)] pointer-events-none" />
@@ -299,7 +299,7 @@ export function Footer() {
                 { label: 'Free Shipping', sub: 'On orders above ₹599' },
                 { label: 'Cash on Delivery', sub: 'Pay when you receive' },
                 { label: '7-Day Returns', sub: 'Hassle-free process' },
-                { label: 'Certified Quality', sub: 'Genuine jewelry' },
+                { label: 'Handmade With Care', sub: 'Thoughtfully crafted gifts' },
               ].map(({ label, sub }) => (
                 <div key={label} className="flex items-center gap-3">
                   <div className="w-1 h-8 bg-[#B8860B]/30 shrink-0" />
@@ -313,7 +313,7 @@ export function Footer() {
 
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-[#B8860B]/15 pt-6">
               <p className="font-syndicatgrotesk text-[10px] tracking-wider text-[#B8860B]/30 text-center sm:text-left">
-                © 2025 {storeName} · All Rights Reserved · Made with love in India
+                © 2025 {storeName} · All Rights Reserved · Made with love
               </p>
               <div className="flex flex-wrap items-center justify-end gap-4">
                 {['UPI', 'VISA', 'Mastercard', 'RuPay'].map((method) => (

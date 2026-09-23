@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
+import { uploadImage } from '@/lib/image-upload'
 import * as XLSX from 'xlsx'
 import JSZip from 'jszip'
 import Link from 'next/link'
@@ -248,13 +249,7 @@ export default function BulkUploadPage() {
       const urls: string[] = []
       for (let j = 0; j < row.images.length; j++) {
         const file = row.images[j]
-        const ext = file.name.split('.').pop() ?? 'jpg'
-        const path = `public/${row.sku}-${j + 1}-${Date.now()}.${ext}`
-        const { error } = await supabase.storage.from('products').upload(path, file, { upsert: true })
-        if (!error) {
-          const { data } = supabase.storage.from('products').getPublicUrl(path)
-          urls.push(data.publicUrl)
-        }
+        try { urls.push(await uploadImage(file, file.name)) } catch { }
       }
       withUrls.push({ ...row, uploadedUrls: urls })
       setImportProgress(Math.round(((i + 1) / toImport.length) * 50))

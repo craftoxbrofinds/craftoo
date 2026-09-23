@@ -1,12 +1,13 @@
 import { ProductRepo } from '@/repositories/product.repo'
 import { isAdmin } from '@/lib/auth'
+import { createAdminClient } from '@/lib/supabase-admin'
 
 export async function GET(req: Request) {
   if (!(await isAdmin(req))) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const { data, error } = await ProductRepo.getAllAdmin()
+  const { data, error } = await ProductRepo.getAllAdmin(createAdminClient())
   if (error) return Response.json({ error: error.message }, { status: 500 })
   return Response.json({ data })
 }
@@ -35,7 +36,7 @@ export async function POST(req: Request) {
     if (original_price !== undefined) payload.original_price = original_price ? Number(original_price) : null
     if (weight?.trim()) payload.weight = weight.trim()
 
-    const { data, error } = await ProductRepo.create(payload)
+    const { data, error } = await ProductRepo.create(payload, createAdminClient())
     if (error) return Response.json({ error: error.message }, { status: 500 })
     return Response.json({ success: true, data }, { status: 201 })
   } catch (e: any) {

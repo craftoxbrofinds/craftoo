@@ -4,31 +4,31 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: #FAF7F2;
-  --foreground: #1A1A1A;
+  --background: #FFFCF8;
+  --foreground: #3F3A46;
   --card: #FFFFFF;
   --card-foreground: #1A1A1A;
   --popover: #FFFFFF;
   --popover-foreground: #1A1A1A;
-  --primary: #B8860B;
+  --primary: #7565A5;
   --primary-foreground: #FFFFFF;
-  --secondary: #F0EBE1;
-  --secondary-foreground: #1A1A1A;
-  --muted: #C4B49A;
-  --muted-foreground: #7A6F62;
-  --accent: #B8860B;
+  --secondary: #F1EAF8;
+  --secondary-foreground: #3F3A46;
+  --muted: #E9E1ED;
+  --muted-foreground: #7D7484;
+  --accent: #9B8AC4;
   --accent-foreground: #FFFFFF;
   --destructive: #DC2626;
   --destructive-foreground: #FFFFFF;
-  --border: #E8E0D5;
+  --border: #E9E1ED;
   --input: #FFFFFF;
-  --ring: #B8860B;
+  --ring: #9B8AC4;
   --chart-1: #B8860B;
   --chart-2: #C4B49A;
   --chart-3: #F0EBE1;
   --chart-4: #F5EFE6;
   --chart-5: #E8E0D5;
-  --radius: 0.375rem;
+  --radius: 0.75rem;
   --sidebar: #FFFFFF;
   --sidebar-foreground: #1A1A1A;
   --sidebar-primary: #B8860B;
@@ -188,3 +188,32 @@ select:-webkit-autofill {
   caret-color: #1A1A1A;
   transition: background-color 9999s ease-in-out 0s;
 }
+
+/* Craftoo storefront palette — maps legacy presentation utilities to the new brand. */
+.bg-site-black { background-color: #fff9f2 !important; }
+.bg-card-dark, .bg-section-dark { background-color: #f1eaf8 !important; }
+.bg-warm-black { background-color: #7565a5 !important; }
+.bg-warm-beige, .bg-soft-cream { background-color: #f7f1fb !important; }
+.bg-deep-gold { background-color: #7565a5 !important; }
+.bg-rich-gold, .bg-light-gold { background-color: #9b8ac4 !important; }
+.border-border-gold, .border-deep-gold, .border-rich-gold { border-color: #dccff0 !important; }
+.border-border-light { border-color: #e9e1ed !important; }
+.text-ivory, .text-warm-black, .text-site-black { color: #3f3a46 !important; }
+.text-deep-gold, .text-rich-gold { color: #7565a5 !important; }
+.text-muted-taupe, .text-text-muted { color: #7d7484 !important; }
+
+.craftoo-logo {
+  width: 138px;
+  height: 48px;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+
+::selection { background: #dccff0; color: #3f3a46; }
+
+@media (max-width: 640px) {
+  .craftoo-logo { width: 112px; height: 42px; }
+}
+
+footer .text-white { color: #3f3a46 !important; }
+footer .text-\[\#D4A017\], footer .text-\[\#B8860B\] { color: #7565a5 !important; }

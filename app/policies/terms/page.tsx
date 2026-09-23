@@ -32,7 +32,7 @@ export default function TermsOfService() {
         },
         {
           heading: 'Product Care Disclaimer',
-          body: 'Our jewellery requires proper care to maintain its finish. We provide care instructions with each order. Damage caused by improper care, exposure to chemicals (perfumes, cleaning agents), or physical impact is not covered under our return policy.',
+          body: 'Our handmade items require gentle care. We provide relevant care instructions with each order. Damage caused by improper care, exposure to chemicals, or physical impact is not covered under our return policy.',
         },
         {
           heading: 'Limitation of Liability',

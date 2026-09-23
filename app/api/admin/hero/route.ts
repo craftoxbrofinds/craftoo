@@ -1,14 +1,9 @@
 import { NextResponse } from 'next/server'
 import { isAdmin } from '@/lib/auth'
-import { createClient } from '@supabase/supabase-js'
-
-const sb = () => createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+import { createAdminClient } from '@/lib/supabase-admin'
 
 export async function GET() {
-  const { data } = await sb()
+  const { data } = await createAdminClient()
     .from('site_settings')
     .select('value')
     .eq('key', 'hero')
@@ -25,7 +20,7 @@ export async function PUT(req: Request) {
   if (Array.isArray(body.desktop)) value.desktop = body.desktop.slice(0, 3)
   if (Array.isArray(body.mobile)) value.mobile = body.mobile.slice(0, 3)
 
-  const { error } = await sb()
+  const { error } = await createAdminClient()
     .from('site_settings')
     .upsert({ key: 'hero', value }, { onConflict: 'key' })
 

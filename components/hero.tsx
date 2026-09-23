@@ -1,174 +1,43 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useEffect, useState, useCallback } from 'react'
 
-const fadeUp = (delay = 0) => ({
-  initial: { opacity: 0, y: 28 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.8, delay, ease: 'easeOut' as const },
-})
-
-// ─── Slideshow ────────────────────────────────────────────────────────────────
-function Slideshow({ images, objectPosition = 'center' }: { images: string[]; objectPosition?: string }) {
-  const [idx, setIdx] = useState(0)
-  const count = images.length
-
-  const prev = useCallback(() => setIdx(i => (i - 1 + count) % count), [count])
-  const next = useCallback(() => setIdx(i => (i + 1) % count), [count])
-
-  // Auto-advance every 3 s
-  useEffect(() => {
-    if (count <= 1) return
-    const t = setInterval(next, 3000)
-    return () => clearInterval(t)
-  }, [count, next])
-
+export function Hero() {
   return (
-    <div className="absolute inset-0">
-      {/* Images — crossfade */}
-      {images.map((src, i) => (
-        <img
-          key={src + i}
-          src={src}
-          alt=""
-          fetchPriority={i === 0 ? 'high' : 'low'}
-          loading={i === 0 ? 'eager' : 'lazy'}
-          className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 pointer-events-none"
-          style={{ opacity: i === idx ? 1 : 0, objectPosition }}
-        />
-      ))}
-
-      {/* Arrows — only if more than 1 image */}
-      {count > 1 && (
-        <>
-          <button
-            onClick={prev}
-            aria-label="Previous slide"
-            className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 flex items-center justify-center bg-black/40 hover:bg-black/70 border border-white/20 text-white transition-colors duration-200"
-          >
-            <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-              <path d="M15 18l-6-6 6-6" />
-            </svg>
-          </button>
-          <button
-            onClick={next}
-            aria-label="Next slide"
-            className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 flex items-center justify-center bg-black/40 hover:bg-black/70 border border-white/20 text-white transition-colors duration-200"
-          >
-            <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-              <path d="M9 18l6-6-6-6" />
-            </svg>
-          </button>
-        </>
-      )}
-
-      {/* Dots */}
-      {count > 1 && (
-        <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 flex gap-2 items-center">
-          {images.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setIdx(i)}
-              aria-label={`Go to slide ${i + 1}`}
-              className={`rounded-full transition-all duration-300 ${i === idx ? 'w-5 h-1.5 bg-[#D4A017]' : 'w-1.5 h-1.5 bg-white/50 hover:bg-white/80'}`}
-            />
-          ))}
-        </div>
-      )}
-    </div>
+    <section className="relative isolate w-full overflow-hidden bg-[#f8f0e8]">
+      <div className="hidden sm:block relative min-h-[520px] lg:min-h-[620px] xl:min-h-[680px]">
+        <img src="/images/craftoo-bouquet-hero.png" alt="Handmade chenille flower bouquet" className="absolute inset-0 h-full w-full object-cover object-center" fetchPriority="high" />
+        <div className="absolute inset-y-0 left-0 w-[58%] bg-gradient-to-r from-[#fffaf5]/75 via-[#fffaf5]/32 to-transparent" />
+        <HeroCopy />
+      </div>
+      <div className="sm:hidden relative min-h-[680px]">
+        <img src="/images/craftoo-bouquet-hero.png" alt="Handmade chenille flower bouquet" className="absolute inset-0 h-full w-full object-cover object-[70%_center]" fetchPriority="high" />
+        <div className="absolute inset-x-0 top-0 h-[52%] bg-gradient-to-b from-[#fffaf5]/95 via-[#fffaf5]/75 to-transparent" />
+        <HeroCopy mobile />
+      </div>
+    </section>
   )
 }
 
-// ─── Main Hero ────────────────────────────────────────────────────────────────
-export function Hero() {
-  const [desktopImgs, setDesktopImgs] = useState<string[]>(['/images/hero_image.png'])
-  const [mobileImgs, setMobileImgs] = useState<string[]>(['/images/hero_image_mobile.png'])
-
-  // Fetch fresh from DB every time — bypasses all Next.js caching
-  useEffect(() => {
-    fetch('/api/admin/hero', { cache: 'no-store' })
-      .then(r => r.json())
-      .then(({ data }) => {
-        if (!data) return
-        const norm = (v: any): string[] => {
-          if (Array.isArray(v) && v.length) return v.filter(Boolean)
-          if (typeof v === 'string' && v) return [v]
-          return []
-        }
-        const d = norm(data.desktop)
-        const m = norm(data.mobile)
-        if (d.length) setDesktopImgs(d)
-        if (m.length) setMobileImgs(m)
-        else if (d.length) setMobileImgs(d) // fallback: use desktop for mobile
-      })
-      .catch(() => {})
-  }, [])
-
+function HeroCopy({ mobile = false }: { mobile?: boolean }) {
   return (
-    <>
-      {/* ── MOBILE ── */}
-      <section className="sm:hidden relative w-full overflow-hidden aspect-[9/19]">
-        <Slideshow images={mobileImgs} objectPosition="center bottom" />
-
-        <div className="absolute inset-x-0 top-0 h-1/2 pointer-events-none z-10"
-          style={{ background: 'linear-gradient(to bottom, rgba(13,13,13,0.72) 0%, transparent 100%)' }} />
-
-        <div className="absolute top-0 left-0 right-0 z-10 px-6 pt-14 flex flex-col items-center text-center pointer-events-none">
-          <motion.h1 {...fadeUp(0.05)} className="font-syndicatgrotesk text-[2.2rem] font-black uppercase leading-[0.92] text-ivory mb-1">
-            Bridal to
-          </motion.h1>
-          <motion.h1 {...fadeUp(0.12)} className="font-brandon text-[2.2rem] font-black uppercase leading-[0.92] tracking-widest mb-4">
-            <span className="text-transparent bg-clip-text animate-shimmer-text"
-              style={{ backgroundImage: 'linear-gradient(90deg, #B8860B, #D4A017, #F0C040, #D4A017, #B8860B)', backgroundSize: '200% auto' }}>
-              Daily
-            </span>
-          </motion.h1>
-          <motion.p {...fadeUp(0.18)} className="font-syndicatgrotesk text-[11px] text-ivory/80 leading-[1.75] max-w-[260px] mb-5">
-            A jewellery collection designed for every occasion — from bridal elegance to everyday wear, made to match every version of you.
-          </motion.p>
-          <motion.div {...fadeUp(0.28)} className="pointer-events-auto">
-            <motion.a href="#collections" whileTap={{ scale: 0.97 }}
-              className="inline-flex items-center justify-center px-7 py-3 bg-[#1d1607] text-[#FFD700] font-syndicatgrotesk text-[9px] font-bold uppercase tracking-[0.28em] hover:bg-[#2a2008] transition-colors duration-200">
-              Shop Collection
-            </motion.a>
-          </motion.div>
+    <div className={`absolute z-10 ${mobile ? 'inset-x-0 top-0 px-6 pt-14 text-center' : 'inset-y-0 left-0 flex max-w-[670px] items-center px-10 lg:px-20 xl:px-28'}`}>
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65, ease: 'easeOut' }} className={mobile ? 'mx-auto max-w-sm' : 'max-w-[480px]'}>
+        <p className="mb-5 flex items-center justify-center gap-3 font-syndicatgrotesk text-[10px] font-semibold tracking-[0.28em] text-[#7e6aa8] uppercase sm:justify-start">
+          <span className="h-px w-8 bg-[#b5a1d2]" /> Handmade with love
+        </p>
+        <h1 className="font-brandon text-[2.8rem] font-bold leading-[0.94] tracking-[-0.04em] text-[#403a38] sm:text-5xl lg:text-6xl xl:text-7xl">
+          Flowers That Last Beyond The Moment
+        </h1>
+        <p className="mt-6 max-w-md font-syndicatgrotesk text-sm leading-7 text-[#756e6b] sm:text-[15px] sm:text-left">
+          Beautiful handmade flowers and thoughtful gifts, crafted to make every occasion a little more special.
+        </p>
+        <div className="mt-8 flex justify-center sm:justify-start">
+          <motion.a href="#collections" whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }} className="inline-flex items-center justify-center rounded-full bg-[#7e6aa8] px-7 py-3.5 font-syndicatgrotesk text-[10px] font-bold tracking-[0.2em] text-white uppercase shadow-[0_8px_20px_rgba(126,106,168,0.22)] transition-colors hover:bg-[#67548e]">
+            Shop Collection
+          </motion.a>
         </div>
-      </section>
-
-      {/* ── DESKTOP ── */}
-      <section className="hidden sm:block relative w-full overflow-hidden aspect-[21/9]">
-        <Slideshow images={desktopImgs} />
-
-        <div className="relative z-10 flex flex-col justify-center h-full px-12 lg:px-20 xl:px-28 max-w-[600px] pointer-events-none">
-          <motion.div {...fadeUp(0)} className="flex items-center gap-3 mb-7">
-            <div className="w-8 h-px bg-rich-gold/70" />
-          </motion.div>
-
-          <div className="mb-6">
-            <motion.h1 {...fadeUp(0.1)} className="font-syndicatgrotesk text-[3.8rem] lg:text-[4.5rem] font-black uppercase leading-[0.9] text-ivory">
-              Bridal to
-            </motion.h1>
-            <motion.h1 {...fadeUp(0.18)} className="font-brandon text-[3.8rem] lg:text-[4.5rem] font-black uppercase leading-[0.9] tracking-widest">
-              <span className="text-transparent bg-clip-text animate-shimmer-text"
-                style={{ backgroundImage: 'linear-gradient(90deg, #B8860B, #D4A017, #F0C040, #D4A017, #B8860B)', backgroundSize: '200% auto' }}>
-                Daily
-              </span>
-            </motion.h1>
-          </div>
-
-          <motion.p {...fadeUp(0.28)} className="font-syndicatgrotesk text-[15px] text-muted-taupe leading-[1.85] max-w-[380px] mb-10">
-            A jewellery collection designed for every occasion — from bridal elegance to everyday wear, made to match every version of you.
-          </motion.p>
-
-          <motion.div {...fadeUp(0.4)} className="pointer-events-auto">
-            <motion.a href="#collections" whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-              className="inline-flex items-center justify-center px-9 py-4 bg-[#1d1607] text-[#FFD700] font-syndicatgrotesk text-[10px] font-bold uppercase tracking-[0.28em] hover:bg-[#2a2008] transition-colors duration-200">
-              Shop Collection
-            </motion.a>
-          </motion.div>
-        </div>
-      </section>
-    </>
+      </motion.div>
+    </div>
   )
 }
