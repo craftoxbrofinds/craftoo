@@ -366,7 +366,7 @@ export default function ProductDetailPage() {
                 { Icon: Shield,     label: 'Secure Payment' },
                 { Icon: RotateCcw,  label: '7-Day Returns' },
                 { Icon: Truck,      label: 'Free Shipping' },
-                { Icon: BadgeCheck, label: 'Certified Quality' },
+                { Icon: BadgeCheck, label: 'Handmade With Care' },
               ].map(({ Icon, label }) => (
                 <div key={label} className="flex items-center gap-2 px-3 py-2.5 bg-white border border-border-light">
                   <Icon size={12} className="text-deep-gold shrink-0" />

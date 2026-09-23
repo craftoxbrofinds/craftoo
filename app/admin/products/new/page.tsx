@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { categoryService, Category } from '@/services/category.service'
+import { uploadImage } from '@/lib/image-upload'
 import Link from 'next/link'
 
 export default function NewProduct() {
@@ -29,12 +30,7 @@ export default function NewProduct() {
     try {
       const urls: string[] = []
       for (const file of Array.from(e.target.files)) {
-        const ext = file.name.split('.').pop()
-        const name = `${Date.now()}-${Math.random().toString(36).slice(7)}.${ext}`
-        const { error } = await supabase.storage.from('products').upload(`public/${name}`, file, { cacheControl: '3600', upsert: false })
-        if (error) throw error
-        const { data } = supabase.storage.from('products').getPublicUrl(`public/${name}`)
-        urls.push(data.publicUrl)
+        urls.push(await uploadImage(file, file.name))
       }
       setImages(p => [...p, ...urls])
     } catch { alert('Image upload failed. Check the "products" storage bucket.') }

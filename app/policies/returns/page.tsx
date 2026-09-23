@@ -42,7 +42,7 @@ export default function ReturnsPolicy() {
               <ul className="mt-3 space-y-2 ml-4">
                 {[
                   'Items returned without original packaging or tags',
-                  'Jewellery that has been worn, altered, or resized',
+                  'Handmade items that have been used, altered, or customized',
                   'Items damaged due to misuse or improper care',
                   'Orders where return is requested after 7 days of delivery',
                   'Items bought during special sales or promotions (marked as non-returnable)',

@@ -92,7 +92,7 @@ export default function CheckoutPage() {
       const rzp = new window.Razorpay({
         key: data.razorpayKeyId,
         name: 'Brofinds',
-        description: 'Jewellery Order',
+        description: 'Craftoo Order',
         image: '/images/logo.png',
         order_id: data.razorpayOrderId,
         prefill: { name: data.name, email: data.email, contact: data.phone },
@@ -347,7 +347,7 @@ export default function CheckoutPage() {
                     { Icon: Shield,     label: 'SSL Secured Payment' },
                     { Icon: RotateCcw,  label: '7-Day Easy Returns' },
                     { Icon: Truck,      label: 'Free Shipping on Orders Above ₹599' },
-                    { Icon: BadgeCheck, label: 'Certified Quality Jewelry' },
+                    { Icon: BadgeCheck, label: 'Handmade With Care' },
                   ].map(({ Icon, label }) => (
                     <div key={label} className="flex items-center gap-2.5">
                       <Icon size={13} className="text-deep-gold shrink-0" />

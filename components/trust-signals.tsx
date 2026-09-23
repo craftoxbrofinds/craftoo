@@ -13,7 +13,7 @@ const signals = [
   {
     Icon: RotateCcw,
     label: 'Easy Returns',
-    description: '7-day no-questions policy',
+    description: 'Simple, customer-friendly support',
   },
   {
     Icon: Lock,

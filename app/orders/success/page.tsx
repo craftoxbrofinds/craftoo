@@ -155,7 +155,7 @@ function SuccessContent() {
         <div className="space-y-3">
           {[
             { step: '01', text: 'Order confirmation SMS & email sent to you' },
-            { step: '02', text: 'Our team verifies and prepares your jewellery' },
+            { step: '02', text: 'Our team prepares your handmade gift with care' },
             { step: '03', text: 'Shipped with tracking within 2–3 business days' },
             { step: '04', text: 'Delivered safely to your doorstep' },
           ].map(s => (

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
+import { uploadImage } from '@/lib/image-upload'
 
 interface Category {
   id: string
@@ -411,19 +412,7 @@ export default function AdminCategories() {
 
     try {
       const token = await getToken()
-      const fileName = `${catId}-${Date.now()}.jpg`
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('categories')
-        .upload(fileName, blob, { contentType: 'image/jpeg', upsert: true })
-
-      if (uploadError) {
-        showToast(`Upload failed: ${uploadError.message}`)
-        setUploadingId(null)
-        return
-      }
-
-      const { data: urlData } = supabase.storage.from('categories').getPublicUrl(fileName)
-      const publicUrl = urlData.publicUrl
+      const publicUrl = await uploadImage(blob, `${catId}.jpg`)
 
       await fetch(`/api/admin/categories/${catId}`, {
         method: 'PUT',

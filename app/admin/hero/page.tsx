@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
+import { uploadImage } from '@/lib/image-upload'
 
 const ASPECTS = { desktop: 21 / 9, mobile: 9 / 19 }
 const MAX_SLIDES = 3
@@ -250,10 +251,7 @@ export default function AdminHeroPage() {
     setUploadingSlot(slotKey)
 
     try {
-      const fileName = `hero-${type}-${idx}-${Date.now()}.jpg`
-      const { error } = await supabase.storage.from('hero').upload(fileName, blob, { contentType: 'image/jpeg', upsert: true })
-      if (error) { showToast('Upload failed: ' + error.message); return }
-      const url = supabase.storage.from('hero').getPublicUrl(fileName).data.publicUrl
+      const url = await uploadImage(blob, `hero-${type}-${idx}.jpg`)
 
       const newD = [...desktop]; const newM = [...mobile]
       if (type === 'desktop') newD[idx] = url

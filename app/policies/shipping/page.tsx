@@ -8,7 +8,7 @@ export default function ShippingPolicy() {
       badge="Policies"
       title="Shipping Policy"
       lastUpdated="April 2025"
-      intro="We want your jewellery to reach you safely and on time. Please read our shipping policy carefully before placing your order."
+      intro="We want your handmade gifts to reach you safely and on time. Please read our shipping policy carefully before placing your order."
       sections={[
         {
           heading: 'Processing Time',
@@ -45,7 +45,7 @@ export default function ShippingPolicy() {
         },
         {
           heading: 'Packaging',
-          body: 'All jewellery is packed in our signature gift-ready boxes with protective cushioning to ensure your items arrive in perfect condition. Packaging is tamper-evident and sealed for safety.',
+          body: 'All handmade gifts are packed with protective cushioning to help them arrive safely. Packaging is carefully prepared for every order.',
         },
         {
           heading: 'Address Accuracy',

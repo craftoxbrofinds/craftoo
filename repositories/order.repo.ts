@@ -1,11 +1,14 @@
 import { supabase } from '@/lib/supabase'
+import type { SupabaseClient } from '@supabase/supabase-js'
+
+type OrderClient = SupabaseClient
 
 export const OrderRepo = {
-    getAll: () =>
-        supabase
+    getAll: (client: OrderClient = supabase) =>
+        client
             .from('orders')
             .select('*, order_items(*, products(*))'),
 
-    updateStatus: (id: string, status: string) =>
-        supabase.from('orders').update({ status }).eq('id', id),
+    updateStatus: (id: string, status: string, client: OrderClient = supabase) =>
+        client.from('orders').update({ status }).eq('id', id),
 }

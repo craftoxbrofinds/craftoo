@@ -128,8 +128,8 @@ export function EditorialStory() {
             <p className="font-syndicatgrotesk text-sm sm:text-[15px] text-muted-taupe leading-relaxed max-w-md">
               Brofinds was born from a deep love of Indian craftsmanship.
               Each piece — radiant, lightweight,
-              and made to be worn every single day. From festivals to daily wear,
-              our jewelry moves with you.
+              and made to be cherished for every special moment. From celebrations
+              to little everyday surprises, our handmade gifts are made for you.
             </p>
 
             {/* Stats grid with countup */}

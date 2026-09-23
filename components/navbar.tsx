@@ -80,8 +80,8 @@ export function Navbar() {
       <nav
         className={`sticky top-0 z-50 w-full transition-all duration-300 ${
           isScrolled
-            ? 'bg-site-black/95 backdrop-blur-sm shadow-[0_2px_40px_rgba(0,0,0,0.7)]'
-            : 'bg-site-black'
+            ? 'bg-[#fff9f2]/95 backdrop-blur-md shadow-[0_8px_30px_rgba(117,101,165,0.10)] border-b border-[#e9e1ed]'
+            : 'bg-[#fff9f2] border-b border-[#e9e1ed]'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -101,12 +101,7 @@ export function Navbar() {
               href="/"
               className="absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0 flex-shrink-0 text-center md:text-left"
             >
-              <span className="block font-brandon text-base sm:text-lg font-black tracking-[0.22em] text-ivory uppercase leading-none">
-                {brand.name}
-              </span>
-              <span className="block text-center font-syndicatgrotesk text-[8px] tracking-[0.35em] text-rich-gold uppercase leading-none mt-1">
-                {/* Handcrafted Jewelry */}
-              </span>
+              <img src="/images/logo/craftoo-logo.png" alt={brand.name || 'Craftoo'} className="craftoo-logo" />
             </Link>
 
             {/* Desktop nav */}
@@ -236,12 +231,11 @@ export function Navbar() {
           </div>
         </div>
 
-        {/* Gold rule */}
-        <div className="h-px bg-gradient-to-r from-transparent via-border-gold to-transparent" />
+        <div className="h-px bg-gradient-to-r from-transparent via-[#dccff0] to-transparent" />
 
         {/* Mobile menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden bg-card-dark">
+          <div className="md:hidden bg-[#fffcf8] border-t border-[#e9e1ed]">
             <div className="px-4 py-4 space-y-0.5">
               {navLinks.map(({ name, slug }) => (
                 <a
@@ -299,7 +293,7 @@ export function Navbar() {
                 type="text"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                placeholder="Search jewellery…"
+                placeholder="Search handmade gifts…"
                 className="flex-1 px-3 py-4 bg-transparent font-syndicatgrotesk text-sm text-warm-black placeholder-muted-taupe outline-none"
               />
               <button
