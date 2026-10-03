@@ -318,6 +318,7 @@ export function CategoryContent({ categoryName, slug, products, allCategories }:
                     image={getFirstImage(product.image)}
                     stock={product.stock ?? null}
                     isDark={false}
+                    showBuyNow={false}
                   />
                 </motion.div>
               ))}

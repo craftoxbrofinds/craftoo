@@ -1,6 +1,6 @@
 export const revalidate = 300
 
-import { AnnouncementBar } from '@/components/announcement-bar'
+// import { AnnouncementBar } from '@/components/announcement-bar'
 import { Navbar } from '@/components/navbar'
 import { Hero } from '@/components/hero'
 import { CategoryGrid } from '@/components/category-grid'
@@ -14,7 +14,8 @@ export default async function Home() {
 
   return (
     <main className="w-full overflow-hidden bg-site-black">
-      <AnnouncementBar />
+      {/* Temporarily hidden: top announcement marquee. */}
+      {/* <AnnouncementBar /> */}
       <Navbar />
       <Hero />
       <CategoryGrid categories={categories.map(c => ({ ...c, slug: c.slug ?? '' }))} />

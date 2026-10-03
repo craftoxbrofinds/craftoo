@@ -255,10 +255,10 @@ export function CartDrawer() {
                 Continue Shopping
               </button>
 
-              {/* Trust note */}
-              <p className="text-center font-syndicatgrotesk text-[9px] tracking-[0.1em] text-muted-taupe">
+              {/* Temporarily hidden: checkout trust note. */}
+              {/* <p className="text-center font-syndicatgrotesk text-[9px] tracking-[0.1em] text-muted-taupe">
                 🔒 Secure checkout · Free returns · Handmade with care
-              </p>
+              </p> */}
             </div>
           )}
         </div>

@@ -7,10 +7,12 @@ import { useSiteSettings } from '@/hooks/use-site-settings'
 
 const POLICY_LINKS = [
   { label: 'Shipping',   href: '/policies/shipping' },
-  { label: 'Returns',    href: '/policies/returns' },
+  // Temporarily hidden: returns link in the Info section.
+  // { label: 'Returns',    href: '/policies/returns' },
   { label: 'Privacy',    href: '/policies/privacy' },
   { label: 'Terms',      href: '/policies/terms' },
-  { label: 'Orders',     href: '/orders' },
+  // Temporarily hidden: orders link in the Info section.
+  // { label: 'Orders',     href: '/orders' },
   { label: 'Contact Us', href: '/contact' },
 ]
 
@@ -162,8 +164,8 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Trust marquee strip */}
-        <div className="overflow-hidden border-b border-[#B8860B]/15 py-3 bg-[#B8860B]/[0.03]">
+        {/* Temporarily hidden: footer trust marquee. */}
+        {/* <div className="overflow-hidden border-b border-[#B8860B]/15 py-3 bg-[#B8860B]/[0.03]">
           <div className="flex animate-marquee-ltr whitespace-nowrap">
             {[...TRUST, ...TRUST, ...TRUST].map((t, i) => (
               <span key={i} className="inline-flex items-center gap-2 px-6 font-syndicatgrotesk text-[8px] tracking-[0.3em] uppercase text-[#B8860B]/60">
@@ -172,18 +174,19 @@ export function Footer() {
               </span>
             ))}
           </div>
-        </div>
+        </div> */}
 
         {/* Bottom */}
         <div className="px-6 py-5 flex items-center justify-between">
           <p className="font-syndicatgrotesk text-[8px] text-[#B8860B]/30 tracking-wider">
             © 2025 {storeName}
           </p>
-          <div className="flex gap-3">
+          {/* Temporarily hidden: payment-method labels. */}
+          {/* <div className="flex gap-3">
             {['UPI', 'VISA', 'RuPay'].map(m => (
               <span key={m} className="font-syndicatgrotesk text-[8px] tracking-[0.15em] uppercase text-[#B8860B]/30">{m}</span>
             ))}
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -242,7 +245,8 @@ export function Footer() {
               <h4 className="font-brandon text-xs font-black uppercase tracking-[0.22em] text-white">Policies</h4>
               <div className="w-8 h-px bg-[#B8860B]/40" />
               <ul className="space-y-2.5">
-                {[...POLICY_LINKS, { label: 'Track Order', href: '/orders' }].map(({ label, href }) => (
+                {/* Track Order is temporarily hidden with the customer order links. */}
+                {[...POLICY_LINKS /*, { label: 'Track Order', href: '/orders' } */].map(({ label, href }) => (
                   <li key={label}>
                     <Link href={href} className="font-syndicatgrotesk text-xs text-[#7A6F62] hover:text-[#B8860B] transition-colors duration-200">
                       {label}
@@ -292,8 +296,8 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Trust strip */}
-          <div className="border-t border-[#B8860B]/15 mt-12 pt-8">
+          {/* Temporarily hidden: footer trust strip. */}
+          {/* <div className="border-t border-[#B8860B]/15 mt-12 pt-8">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-8">
               {[
                 { label: 'Free Shipping', sub: 'On orders above ₹599' },
@@ -323,7 +327,7 @@ export function Footer() {
                 ))}
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
 

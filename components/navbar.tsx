@@ -101,7 +101,16 @@ export function Navbar() {
               href="/"
               className="absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0 flex-shrink-0 text-center md:text-left"
             >
-              <img src="/images/logo/craftoo-logo.png" alt={brand.name || 'Craftoo'} className="craftoo-logo" />
+              <img
+                src="/images/logo/png.png"
+                alt={brand.name || 'Craftoo'}
+                className="craftoo-logo hidden sm:block"
+              />
+              <img
+                src="/images/logo/png.png"
+                alt={brand.name || 'Craftoo'}
+                className="craftoo-logo sm:hidden"
+              />
             </Link>
 
             {/* Desktop nav */}
@@ -178,13 +187,14 @@ export function Navbar() {
 
             {/* Right icons */}
             <div className="flex items-center gap-1.5 sm:gap-2">
-              <button
+              {/* Temporarily hidden: customer search. */}
+              {/* <button
                 onClick={() => setIsSearchOpen(true)}
                 className="p-2 text-muted-taupe hover:text-rich-gold transition-colors"
                 aria-label="Search"
               >
                 <Search size={17} />
-              </button>
+              </button> */}
 
               <button
                 onClick={() => session ? router.push('/orders') : router.push('/signin')}
@@ -209,9 +219,10 @@ export function Navbar() {
 
               {session ? (
                 <div className="hidden sm:flex items-center gap-1">
-                  <a href="/orders" className="p-2 text-muted-taupe hover:text-rich-gold transition-colors" aria-label="Orders">
+                  {/* Temporarily hidden: customer orders shortcut. */}
+                  {/* <a href="/orders" className="p-2 text-muted-taupe hover:text-rich-gold transition-colors" aria-label="Orders">
                     <User size={17} />
-                  </a>
+                  </a> */}
                   <button
                     onClick={handleLogout}
                     className="px-2 py-1 font-syndicatgrotesk text-[9px] tracking-widest uppercase text-muted-taupe/60 hover:text-red-400 transition-colors"
@@ -231,7 +242,8 @@ export function Navbar() {
           </div>
         </div>
 
-        <div className="h-px bg-gradient-to-r from-transparent via-[#dccff0] to-transparent" />
+        {/* Temporarily hidden: divider line beside/below the Craftoo logo. */}
+        {/* <div className="h-px bg-gradient-to-r from-transparent via-[#dccff0] to-transparent" /> */}
 
         {/* Mobile menu */}
         {isMobileMenuOpen && (
@@ -257,9 +269,10 @@ export function Navbar() {
               <div className="pt-3 border-t border-border-gold mt-2">
                 {session ? (
                   <>
-                    <a href="/orders" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-2 text-xs uppercase tracking-widest text-muted-taupe/70 hover:text-ivory font-syndicatgrotesk">
+                    {/* Temporarily hidden: My Orders menu item. */}
+                    {/* <a href="/orders" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-2 text-xs uppercase tracking-widest text-muted-taupe/70 hover:text-ivory font-syndicatgrotesk">
                       My Orders
-                    </a>
+                    </a> */}
                     <button onClick={handleLogout} className="block w-full text-left px-3 py-2 text-xs uppercase tracking-widest text-red-400 font-syndicatgrotesk">
                       Logout
                     </button>
@@ -276,8 +289,8 @@ export function Navbar() {
       </nav>
       <CartDrawer />
 
-      {/* Search overlay */}
-      {isSearchOpen && (
+      {/* Temporarily hidden: customer search overlay. */}
+      {false && isSearchOpen && (
         <div className="fixed inset-0 z-[60] flex items-start justify-center pt-24 px-4">
           {/* Backdrop */}
           <div

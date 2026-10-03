@@ -1,18 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useCartStore } from '@/store/cart'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
-import Script from 'next/script'
 import Link from 'next/link'
-import { ShoppingBag, Shield, RotateCcw, Truck, BadgeCheck } from 'lucide-react'
-
-declare global {
-  interface Window { Razorpay: any }
-}
+import { ShoppingBag, Shield, Truck, BadgeCheck } from 'lucide-react'
 
 function getFirstImage(raw: string | undefined): string | undefined {
   if (!raw) return undefined
@@ -29,22 +24,27 @@ export default function CheckoutPage() {
   const { items, fetchCart } = useCartStore()
   const router = useRouter()
 
-  const [token, setToken] = useState<string | null>(null)
   const [form, setForm] = useState({ name: '', email: '', phone: '', address: '' })
   const [loading, setLoading] = useState(false)
   const [pageLoading, setPageLoading] = useState(true)
   const [error, setError] = useState('')
+  const errorRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const init = async () => {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) { router.push('/signin'); return }
-      setToken(session.access_token)
       await fetchCart(session.access_token)
       setPageLoading(false)
     }
     init()
   }, [])
+
+  useEffect(() => {
+    if (!error) return
+    errorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    errorRef.current?.focus({ preventScroll: true })
+  }, [error])
 
   const total = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0)
   const itemCount = items.reduce((a, i) => a + i.quantity, 0)
@@ -52,74 +52,42 @@ export default function CheckoutPage() {
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault()
     if (items.length === 0) { setError('Your cart is empty.'); return }
-    setLoading(true)
     setError('')
 
-    if (!window.Razorpay) {
-      setError('Payment SDK not loaded. Please refresh the page and try again.')
-      setLoading(false)
+    if (!form.name.trim()) {
+      setError('Please enter your full name before continuing.')
+      return
+    }
+    if (!form.email.trim()) {
+      setError('Please enter your email address before continuing.')
+      return
+    }
+    if (!/^[6-9][0-9]{9}$/.test(form.phone)) {
+      setError('Please enter a valid 10-digit phone number before continuing.')
+      return
+    }
+    if (!form.address.trim()) {
+      setError('Please enter your delivery address before continuing.')
       return
     }
 
-    try {
-      const res = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify(form),
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Failed to initialize checkout')
-
-      // If mock order (Razorpay not configured), skip modal and confirm directly
-      if (data.razorpayOrderId?.startsWith('mock_order_')) {
-        const verifyRes = await fetch('/api/payments/verify', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-          body: JSON.stringify({
-            orderId: data.orderId,
-            razorpay_order_id: data.razorpayOrderId,
-            razorpay_payment_id: `mock_pay_${data.orderId}`,
-            razorpay_signature: 'mock_signature',
-          }),
-        })
-        const verifyData = await verifyRes.json()
-        if (!verifyRes.ok) throw new Error(verifyData.error || 'Order confirmation failed')
-        useCartStore.getState().clearCart()
-        router.push(`/orders/success?orderId=${data.orderId}`)
-        return
-      }
-
-      const rzp = new window.Razorpay({
-        key: data.razorpayKeyId,
-        name: 'Brofinds',
-        description: 'Craftoo Order',
-        image: '/images/logo.png',
-        order_id: data.razorpayOrderId,
-        prefill: { name: data.name, email: data.email, contact: data.phone },
-        theme: { color: '#B8860B' },
-        handler: async (response: any) => {
-          const verifyRes = await fetch('/api/payments/verify', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-            body: JSON.stringify({
-              orderId: data.orderId,
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
-            }),
-          })
-          const verifyData = await verifyRes.json()
-          if (!verifyRes.ok) throw new Error(verifyData.error || 'Payment verification failed')
-          useCartStore.getState().clearCart()
-          router.push(`/orders/success?orderId=${data.orderId}`)
-        },
-        modal: { ondismiss: () => setLoading(false) },
-      })
-      rzp.open()
-    } catch (err: any) {
-      setError(err.message)
-      setLoading(false)
-    }
+    setLoading(true)
+    const orderLines = items.map(item =>
+      `• ${item.product.name} × ${item.quantity} — ₹${(item.product.price * item.quantity).toLocaleString('en-IN')}`
+    )
+    const message = [
+      'Hello Craftoo, I would like to place an order.',
+      '',
+      'Items:',
+      ...orderLines,
+      `Total: ₹${total.toLocaleString('en-IN')}`,
+      '',
+      `Name: ${form.name}`,
+      `Email: ${form.email}`,
+      `Phone: ${form.phone}`,
+      `Address: ${form.address}`,
+    ].join('\n')
+    window.location.href = `https://wa.me/918971210413?text=${encodeURIComponent(message)}`
   }
 
   if (pageLoading) {
@@ -134,8 +102,6 @@ export default function CheckoutPage() {
 
   return (
     <>
-      <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />
-
       <div className="min-h-screen bg-warm-beige">
         <Navbar />
 
@@ -169,13 +135,18 @@ export default function CheckoutPage() {
 
               <div className="px-6 py-6">
                 {error && (
-                  <div className="mb-5 flex items-start gap-2 px-4 py-3 border border-red-300 bg-red-50 text-red-700 font-syndicatgrotesk text-xs">
+                  <div
+                    ref={errorRef}
+                    role="alert"
+                    tabIndex={-1}
+                    className="mb-5 flex items-start gap-2 px-4 py-3 border border-red-300 bg-red-50 text-red-700 font-syndicatgrotesk text-xs"
+                  >
                     <span className="shrink-0 mt-0.5">✕</span>
                     {error}
                   </div>
                 )}
 
-                <form onSubmit={handleCheckout} className="space-y-4">
+                <form noValidate onSubmit={handleCheckout} className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block font-syndicatgrotesk text-[10px] tracking-[0.2em] uppercase text-text-muted mb-1.5">
@@ -221,7 +192,7 @@ export default function CheckoutPage() {
                       Delivery Address <span className="text-deep-gold">*</span>
                     </label>
                     <textarea
-                      required rows={4}
+                      rows={4}
                       value={form.address}
                       onChange={e => setForm({ ...form, address: e.target.value })}
                       placeholder="Flat / House No., Street, City, State, PIN Code"
@@ -237,7 +208,7 @@ export default function CheckoutPage() {
                         100% Secure Checkout
                       </p>
                       <p className="font-syndicatgrotesk text-[10px] text-text-muted mt-0.5">
-                        UPI · Debit / Credit Cards · Net Banking · Wallets
+                        We currently accept UPI payments only.
                       </p>
                     </div>
                   </div>
@@ -250,7 +221,6 @@ export default function CheckoutPage() {
                     <Link href="/policies/privacy" target="_blank" className="text-deep-gold hover:underline">Privacy Policy</Link>.
                   </p>
 
-                  {/* Pay button */}
                   <button
                     type="submit"
                     disabled={loading || items.length === 0}
@@ -259,10 +229,10 @@ export default function CheckoutPage() {
                     {loading ? (
                       <span className="flex items-center justify-center gap-2">
                         <span className="w-3.5 h-3.5 border-2 border-ivory/30 border-t-ivory rounded-full animate-spin" />
-                        Processing…
+                        Opening WhatsApp…
                       </span>
                     ) : (
-                      `Pay ₹${total.toLocaleString('en-IN')}`
+                      'Continue on WhatsApp'
                     )}
                   </button>
                 </form>
@@ -344,8 +314,7 @@ export default function CheckoutPage() {
                 </p>
                 <div className="space-y-2.5">
                   {[
-                    { Icon: Shield,     label: 'SSL Secured Payment' },
-                    { Icon: RotateCcw,  label: '7-Day Easy Returns' },
+                    { Icon: Shield,     label: 'UPI Payments Only' },
                     { Icon: Truck,      label: 'Free Shipping on Orders Above ₹599' },
                     { Icon: BadgeCheck, label: 'Handmade With Care' },
                   ].map(({ Icon, label }) => (

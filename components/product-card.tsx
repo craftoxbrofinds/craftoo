@@ -17,6 +17,7 @@ interface ProductCardProps {
   isDark?: boolean
   badge?: string
   stock?: number | null
+  showBuyNow?: boolean
 }
 
 export function ProductCard({
@@ -29,6 +30,7 @@ export function ProductCard({
   isDark = false,
   badge,
   stock,
+  showBuyNow = true,
 }: ProductCardProps) {
   const outOfStock = stock !== null && stock !== undefined && stock === 0
   const [isWishlisted, setIsWishlisted] = useState(false)
@@ -212,6 +214,7 @@ export function ProductCard({
                 <span>{adding ? '…' : 'Add to Cart'}</span>
               </motion.button>
 
+              {showBuyNow && <>
               <span className={`w-px my-2 ${isDark ? 'bg-border-gold/50' : 'bg-deep-gold/20'}`} />
 
               <motion.button
@@ -230,6 +233,7 @@ export function ProductCard({
                 <Zap size={11} className="shrink-0" />
                 <span>Buy Now</span>
               </motion.button>
+              </>}
             </div>
           )}
         </div>

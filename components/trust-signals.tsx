@@ -1,6 +1,6 @@
 'use client'
 
-import { ShieldCheck, Truck, RotateCcw, Lock } from 'lucide-react'
+import { Truck, Lock } from 'lucide-react'
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
 
@@ -11,14 +11,9 @@ const signals = [
     description: 'On all orders above ₹599',
   },
   {
-    Icon: RotateCcw,
-    label: 'Easy Returns',
-    description: 'Simple, customer-friendly support',
-  },
-  {
     Icon: Lock,
-    label: 'Secure Payments',
-    description: 'UPI · Cards · Wallets',
+    label: 'UPI Payments',
+    description: 'UPI accepted at checkout',
   },
 ]
 

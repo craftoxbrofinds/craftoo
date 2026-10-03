@@ -36,7 +36,7 @@ export function CategoryGrid({ categories }: CategoryGridProps) {
   if (items.length === 0) return null
 
   return (
-    <section className="w-full bg-site-black py-14 sm:py-20" ref={ref}>
+    <section id="shop-by-category" className="w-full bg-site-black py-14 sm:py-20" ref={ref}>
 
       {/* Header */}
       <motion.div
