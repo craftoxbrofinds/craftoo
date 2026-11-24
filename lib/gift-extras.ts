@@ -22,7 +22,12 @@ export const GIFT_EXTRAS: { key: GiftExtraKey; label: string; short: string; hin
 
 /** Shopper photo uploads for the "Your photo" extra. */
 export const MAX_GIFT_PHOTOS = 5
-export const MAX_GIFT_PHOTO_BYTES = 10 * 1024 * 1024
+/**
+ * Uploads pass through our server on Vercel, which accepts at most about 4.5 MB per request,
+ * so photos and images are limited to 4 MB. Used for customer photos and admin images.
+ */
+export const MAX_UPLOAD_MB = 4
+export const MAX_GIFT_PHOTO_BYTES = MAX_UPLOAD_MB * 1024 * 1024
 export const GIFT_PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as const
 
 export const GIFT_EXTRA_KEYS = GIFT_EXTRAS.map(extra => extra.key)

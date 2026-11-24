@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { randomUUID } from 'crypto'
 import { isAdmin } from '@/lib/auth'
 import { FileStorageError, STORABLE_IMAGE_EXTENSIONS, putFile } from '@/lib/file-storage'
+import { MAX_GIFT_PHOTO_BYTES, MAX_UPLOAD_MB } from '@/lib/gift-extras'
 
 export async function POST(req: Request) {
   if (!(await isAdmin(req))) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -10,6 +11,10 @@ export async function POST(req: Request) {
   const file = formData.get('file')
   if (!(file instanceof File)) {
     return NextResponse.json({ error: 'Image file is required' }, { status: 400 })
+  }
+
+  if (file.size > MAX_GIFT_PHOTO_BYTES) {
+    return NextResponse.json({ error: `Images can be up to ${MAX_UPLOAD_MB} MB.` }, { status: 413 })
   }
 
   const extension = file.name.split('.').pop()?.toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg'

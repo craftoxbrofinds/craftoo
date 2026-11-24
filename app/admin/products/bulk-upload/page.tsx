@@ -244,12 +244,18 @@ export default function BulkUploadPage() {
 
     // Upload images first — batch upload to Supabase storage
     const withUrls: (ProductRow & { uploadedUrls: string[] })[] = []
+    // Images that couldn't be uploaded (for example over the size limit); the product still imports.
+    const skippedImages: { sku: string; error: string }[] = []
     for (let i = 0; i < toImport.length; i++) {
       const row = toImport[i]
       const urls: string[] = []
       for (let j = 0; j < row.images.length; j++) {
         const file = row.images[j]
-        try { urls.push(await uploadImage(file, file.name)) } catch { }
+        try {
+          urls.push(await uploadImage(file, file.name))
+        } catch (err) {
+          skippedImages.push({ sku: row.sku, error: `Image skipped: ${err instanceof Error ? err.message : file.name}` })
+        }
       }
       withUrls.push({ ...row, uploadedUrls: urls })
       setImportProgress(Math.round(((i + 1) / toImport.length) * 50))
@@ -276,7 +282,7 @@ export default function BulkUploadPage() {
     })
     setImportProgress(100)
     const result = await res.json()
-    setImportResults({ succeeded: result.succeeded ?? 0, failed: result.failed ?? [] })
+    setImportResults({ succeeded: result.succeeded ?? 0, failed: [...(result.failed ?? []), ...skippedImages] })
     setStep('done')
   }
 

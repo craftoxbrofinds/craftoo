@@ -1,6 +1,6 @@
 import { randomUUID } from 'crypto'
 import { ApiError, getOptionalUser, handleApiError } from '@/lib/flower-quest/server'
-import { MAX_GIFT_PHOTO_BYTES } from '@/lib/gift-extras'
+import { MAX_GIFT_PHOTO_BYTES, MAX_UPLOAD_MB } from '@/lib/gift-extras'
 import { FileStorageError, putFile } from '@/lib/file-storage'
 
 /** Detects the image type from the file's first bytes; the browser's stated type isn't trusted. */
@@ -25,7 +25,7 @@ export async function POST(req: Request) {
     const file = formData?.get('file')
     if (!(file instanceof File)) throw new ApiError('Choose a photo to upload.', 400)
     if (file.size === 0) throw new ApiError('That photo is empty. Choose another one.', 400)
-    if (file.size > MAX_GIFT_PHOTO_BYTES) throw new ApiError('Each photo can be up to 10 MB.', 413)
+    if (file.size > MAX_GIFT_PHOTO_BYTES) throw new ApiError(`Each photo can be up to ${MAX_UPLOAD_MB} MB.`, 413)
 
     const bytes = new Uint8Array(await file.arrayBuffer())
     const image = detectImage(bytes)

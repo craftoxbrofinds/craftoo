@@ -4,7 +4,7 @@ import { useRef, useState } from 'react'
 import { ImagePlus, Loader2, X } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useGiftExtras } from '@/store/gift-extras'
-import { GIFT_PHOTO_TYPES, MAX_GIFT_PHOTOS, MAX_GIFT_PHOTO_BYTES } from '@/lib/gift-extras'
+import { GIFT_PHOTO_TYPES, MAX_GIFT_PHOTOS, MAX_GIFT_PHOTO_BYTES, MAX_UPLOAD_MB } from '@/lib/gift-extras'
 
 const EMPTY: string[] = []
 
@@ -30,7 +30,7 @@ export function GiftPhotoUploader({ productId, compact = false }: { productId: s
     const problems: string[] = []
     const accepted = chosen.filter(file => {
       if (!(GIFT_PHOTO_TYPES as readonly string[]).includes(file.type)) { problems.push(`${file.name} isn’t a JPG, PNG or WebP photo.`); return false }
-      if (file.size > MAX_GIFT_PHOTO_BYTES) { problems.push(`${file.name} is over 10 MB.`); return false }
+      if (file.size > MAX_GIFT_PHOTO_BYTES) { problems.push(`${file.name} is over ${MAX_UPLOAD_MB} MB. Please choose a smaller photo.`); return false }
       return true
     })
     if (accepted.length > remaining) problems.push(`You can add ${MAX_GIFT_PHOTOS} photos in all, so only the first ${Math.max(remaining, 0)} were added.`)
@@ -112,7 +112,7 @@ export function GiftPhotoUploader({ productId, compact = false }: { productId: s
       />
       <p className="mt-1 font-syndicatgrotesk text-[10px] leading-4 text-text-muted">
         {photos.length === 0 && uploading === 0
-          ? `Upload up to ${MAX_GIFT_PHOTOS} photos (JPG, PNG or WebP, up to 10 MB each).`
+          ? `Upload up to ${MAX_GIFT_PHOTOS} photos (JPG, PNG or WebP, up to ${MAX_UPLOAD_MB} MB each).`
           : `${photos.length} of ${MAX_GIFT_PHOTOS} photos added.`}
       </p>
       {error && <p role="alert" className="mt-1 font-syndicatgrotesk text-[10px] leading-4 text-red-700">{error}</p>}

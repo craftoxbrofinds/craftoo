@@ -6,7 +6,6 @@ import { Hero } from '@/components/hero'
 import { CategoryGrid } from '@/components/category-grid'
 import { TrustSignals } from '@/components/trust-signals'
 import { Footer } from '@/components/footer'
-import { FloatingWhatsApp } from '@/components/floating-whatsapp'
 import { categoryService } from '@/services/category.service'
 import { FlowerQuestPromo } from '@/components/flower-quest/promo'
 import { OrderPlacedBanner } from '@/components/order-placed-banner'
@@ -25,7 +24,6 @@ export default async function Home() {
       <CategoryGrid categories={categories.map(c => ({ ...c, slug: c.slug ?? '' }))} />
       <TrustSignals />
       <Footer />
-      <FloatingWhatsApp />
     </main>
   )
 }
