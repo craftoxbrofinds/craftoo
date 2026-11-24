@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase'
 import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
 import Link from 'next/link'
+import { formatDateIST } from '@/lib/datetime'
 
 function getFirstImage(raw: string | undefined): string | undefined {
   if (!raw) return undefined
@@ -87,12 +88,12 @@ function SuccessContent() {
           <div className="px-6 py-4 border-b border-border-light bg-soft-cream flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
               <p className="font-syndicatgrotesk text-[9px] tracking-[0.2em] uppercase text-muted-taupe mb-1">Order ID</p>
-              <p className="font-mono text-xs text-warm-black">{order.id.slice(0, 8).toUpperCase()}…</p>
+              <p className="font-mono text-xs text-warm-black">{order.order_number || `${order.id.slice(0, 8).toUpperCase()}…`}</p>
             </div>
             <div>
               <p className="font-syndicatgrotesk text-[9px] tracking-[0.2em] uppercase text-muted-taupe mb-1">Date</p>
               <p className="font-syndicatgrotesk text-xs text-warm-black">
-                {new Date(order.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
+                {formatDateIST(order.created_at, { day: 'numeric', month: 'long', year: 'numeric' })}
               </p>
             </div>
             <div>

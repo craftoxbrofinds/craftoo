@@ -5,6 +5,7 @@ import { useRouter, usePathname } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 import { useSiteSettings } from '@/hooks/use-site-settings'
+import { useGiftExtras } from '@/store/gift-extras'
 
 const NAV_ITEMS = [
   {
@@ -55,6 +56,16 @@ const NAV_ITEMS = [
         <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" />
         <rect x="9" y="3" width="6" height="4" rx="1" />
         <path d="M9 12h6M9 16h4" />
+      </svg>
+    ),
+  },
+  {
+    href: '/admin/coupons',
+    label: 'Coupons',
+    icon: (
+      <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+        <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+        <circle cx="7" cy="7" r="1.5" />
       </svg>
     ),
   },
@@ -201,6 +212,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
+    useGiftExtras.getState().setOwner(null)
     router.push('/signin')
   }
 
@@ -224,10 +236,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <div className="flex min-h-screen bg-[#F5EFE6] font-brandon">
+    <div className="flex min-h-screen bg-[#F5EFE6] font-brandon print:block print:bg-white">
 
       {/* ── DESKTOP sidebar (always visible, takes layout space) ── */}
-      <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:flex-shrink-0 lg:sticky lg:top-0 lg:h-screen">
+      <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:flex-shrink-0 lg:sticky lg:top-0 lg:h-screen print:hidden!">
         <SidebarContent
           pathname={pathname}
           onNavigate={() => {}}
@@ -246,7 +258,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {/* ── MOBILE: drawer ── */}
       <aside
-        className={`fixed inset-y-0 left-0 w-64 z-50 lg:hidden transform transition-transform duration-300 ease-out
+        className={`fixed inset-y-0 left-0 w-64 z-50 lg:hidden print:hidden transform transition-transform duration-300 ease-out
           ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}`}
         aria-label="Navigation"
       >
@@ -261,7 +273,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="flex-1 flex flex-col min-w-0">
 
         {/* Mobile top bar */}
-        <header className="lg:hidden sticky top-0 z-30 flex items-center justify-between h-14 px-4 bg-[#0D0D0D] border-b border-white/[0.08]">
+        <header className="lg:hidden print:hidden sticky top-0 z-30 flex items-center justify-between h-14 px-4 bg-[#0D0D0D] border-b border-white/[0.08]">
           <button
             onClick={() => setMobileOpen(true)}
             className="p-2 text-white/60 hover:text-white transition-colors"
@@ -277,7 +289,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="w-9" />
         </header>
 
-        <main className="flex-1 overflow-auto">
+        <main className="flex-1 overflow-auto print:overflow-visible">
           {children}
         </main>
       </div>

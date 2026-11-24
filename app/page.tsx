@@ -8,6 +8,8 @@ import { TrustSignals } from '@/components/trust-signals'
 import { Footer } from '@/components/footer'
 import { FloatingWhatsApp } from '@/components/floating-whatsapp'
 import { categoryService } from '@/services/category.service'
+import { FlowerQuestPromo } from '@/components/flower-quest/promo'
+import { OrderPlacedBanner } from '@/components/order-placed-banner'
 
 export default async function Home() {
   const categories = await categoryService.getAll()
@@ -17,7 +19,9 @@ export default async function Home() {
       {/* Temporarily hidden: top announcement marquee. */}
       {/* <AnnouncementBar /> */}
       <Navbar />
+      <OrderPlacedBanner />
       <Hero />
+      <FlowerQuestPromo />
       <CategoryGrid categories={categories.map(c => ({ ...c, slug: c.slug ?? '' }))} />
       <TrustSignals />
       <Footer />

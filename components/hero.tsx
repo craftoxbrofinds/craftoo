@@ -32,9 +32,12 @@ function HeroCopy({ mobile = false }: { mobile?: boolean }) {
         <p className="mt-6 max-w-md font-syndicatgrotesk text-sm leading-7 text-[#756e6b] sm:text-[15px] sm:text-left">
           Beautiful handmade flowers and thoughtful gifts, crafted to make every occasion a little more special.
         </p>
-        <div className="mt-8 flex justify-center sm:justify-start">
-          <motion.a href="#shop-by-category" whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }} className="inline-flex items-center justify-center rounded-full bg-[#7e6aa8] px-7 py-3.5 font-syndicatgrotesk text-[10px] font-bold tracking-[0.2em] text-white uppercase shadow-[0_8px_20px_rgba(126,106,168,0.22)] transition-colors hover:bg-[#67548e]">
+        <div className="mt-8 flex flex-wrap justify-center gap-3 sm:justify-start">
+          <motion.a href="#shop-by-category" whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }} className="inline-flex items-center justify-center whitespace-nowrap rounded-full bg-[#7e6aa8] px-7 py-3.5 font-syndicatgrotesk text-[10px] font-bold tracking-[0.2em] text-white uppercase shadow-[0_8px_20px_rgba(126,106,168,0.22)] transition-colors hover:bg-[#67548e] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#51486c]">
             Shop Collection
+          </motion.a>
+          <motion.a href="/play" whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }} className="inline-flex items-center justify-center whitespace-nowrap rounded-full bg-[#7e6aa8] px-7 py-3.5 font-syndicatgrotesk text-[10px] font-bold tracking-[0.2em] text-white uppercase shadow-[0_8px_20px_rgba(126,106,168,0.22)] transition-colors hover:bg-[#67548e] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#51486c]">
+            Play the Flower Quest
           </motion.a>
         </div>
       </motion.div>

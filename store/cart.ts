@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { useGiftExtras } from '@/store/gift-extras'
 
 export interface CartItem {
     id: string
@@ -29,7 +30,7 @@ interface CartState {
 
 const mapCartData = (data: any): CartItem[] => {
     if (!data || !data.cart_items) return []
-    return data.cart_items.map((item: any) => ({
+    const items: CartItem[] = data.cart_items.map((item: any) => ({
         id: item.id,
         quantity: item.quantity,
         product: {
@@ -40,6 +41,9 @@ const mapCartData = (data: any): CartItem[] => {
             stock: item.products.stock ?? null
         }
     }))
+    // This is the server's copy of the cart, so gift extras for anything no longer in it are dropped.
+    useGiftExtras.getState().keepOnly(items.map(item => item.product.id))
+    return items
 }
 
 export const useCartStore = create<CartState>((set) => ({
@@ -77,7 +81,8 @@ export const useCartStore = create<CartState>((set) => ({
             })
             const json = await res.json()
             if (!res.ok) throw new Error(json.error || 'Failed to add to cart')
-            set({ items: mapCartData(json.data), isOpen: true, isLoading: false })
+            // The "added to cart" popup confirms the add, so the drawer stays closed.
+            set({ items: mapCartData(json.data), isLoading: false })
         } catch (error: any) {
             set({ error: error.message, isLoading: false })
             throw error
@@ -111,11 +116,12 @@ export const useCartStore = create<CartState>((set) => ({
                 method: 'DELETE',
                 headers: { Authorization: `Bearer ${token}` }
             })
-            if (!res.ok) throw new Error('Failed to remove item')
-            const { data } = await res.json()
-            set({ items: mapCartData(data), isLoading: false })
+            const json = await res.json().catch(() => ({}))
+            if (!res.ok) throw new Error(json.error || 'Could not remove this item. Please try again.')
+            set({ items: mapCartData(json.data), isLoading: false })
         } catch (error: any) {
             set({ error: error.message, isLoading: false })
+            throw error
         }
     },
     

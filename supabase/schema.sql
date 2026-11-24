@@ -143,7 +143,7 @@ CREATE TABLE IF NOT EXISTS public.site_settings (
 -- Default values — admin will update these via /admin/settings
 INSERT INTO public.site_settings (key, value) VALUES
   ('brand', '{
-    "name":        "My Store",
+    "name":        "Craftoo",
     "tagline":     "",
     "site_url":    "",
     "favicon_url": "/favicon.ico"
@@ -163,13 +163,13 @@ INSERT INTO public.site_settings (key, value) VALUES
   ('announcement', '{
     "enabled":  true,
     "messages": [
-      "✦ Free Shipping on Orders Above ₹599",
+      "✦ Free Shipping on Orders of ₹1,000 and Above",
       "✦ Easy 7-Day Returns — No Questions Asked",
       "✦ Secure Payments · UPI · Cards · Wallets"
     ]
   }'),
   ('seo', '{
-    "title":       "My Store",
+    "title":       "Craftoo",
     "description": "Shop online — free shipping and easy returns.",
     "og_image":    ""
   }'),
@@ -209,8 +209,10 @@ ALTER TABLE public.site_settings ENABLE ROW LEVEL SECURITY;
 
 -- Users: can read/update own row
 CREATE POLICY "users_select_own"   ON public.users FOR SELECT USING (auth.uid() = id);
-CREATE POLICY "users_insert_own"   ON public.users FOR INSERT WITH CHECK (auth.uid() = id);
-CREATE POLICY "users_update_own"   ON public.users FOR UPDATE USING (auth.uid() = id);
+CREATE POLICY "users_update_profile" ON public.users FOR UPDATE USING (auth.uid() = id) WITH CHECK (auth.uid() = id);
+REVOKE INSERT, UPDATE ON public.users FROM anon, authenticated;
+REVOKE UPDATE (role) ON public.users FROM anon, authenticated;
+GRANT UPDATE (name, email) ON public.users TO authenticated;
 
 -- Carts: own cart only
 CREATE POLICY "carts_own" ON public.carts FOR ALL USING (
@@ -223,19 +225,29 @@ CREATE POLICY "cart_items_own" ON public.cart_items FOR ALL USING (
 );
 
 -- Orders: own orders only
-CREATE POLICY "orders_own" ON public.orders FOR ALL USING (
-  user_id = auth.uid()
-);
+CREATE POLICY "orders_select_own" ON public.orders FOR SELECT USING (user_id = auth.uid());
+REVOKE INSERT, UPDATE, DELETE ON public.orders FROM anon, authenticated;
+GRANT SELECT ON public.orders TO authenticated;
 
 -- Order items: via order ownership
-CREATE POLICY "order_items_own" ON public.order_items FOR ALL USING (
-  order_id IN (SELECT id FROM public.orders WHERE user_id = auth.uid())
+CREATE POLICY "order_items_select_own" ON public.order_items FOR SELECT USING (
+  EXISTS (
+    SELECT 1 FROM public.orders
+    WHERE orders.id = order_items.order_id AND orders.user_id = auth.uid()
+  )
 );
+REVOKE INSERT, UPDATE, DELETE ON public.order_items FROM anon, authenticated;
+GRANT SELECT ON public.order_items TO authenticated;
 
 -- Payments: via order ownership
-CREATE POLICY "payments_own" ON public.payments FOR ALL USING (
-  order_id IN (SELECT id FROM public.orders WHERE user_id = auth.uid())
+CREATE POLICY "payments_select_own" ON public.payments FOR SELECT USING (
+  EXISTS (
+    SELECT 1 FROM public.orders
+    WHERE orders.id = payments.order_id AND orders.user_id = auth.uid()
+  )
 );
+REVOKE INSERT, UPDATE, DELETE ON public.payments FROM anon, authenticated;
+GRANT SELECT ON public.payments TO authenticated;
 
 -- Products: everyone can read active products
 CREATE POLICY "products_public_read" ON public.products FOR SELECT USING (is_active = true);

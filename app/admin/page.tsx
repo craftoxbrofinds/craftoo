@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
+import { formatDateIST } from '@/lib/datetime'
 
 function StatCard({
   label,
@@ -256,9 +257,9 @@ export default function AdminDashboard() {
               <tbody>
                 {orders.slice(0, 6).map((o, i) => (
                   <tr key={o.id} className={`border-b border-[#F0EBE1] hover:bg-[#FAF7F2] transition-colors ${i % 2 === 0 ? '' : 'bg-[#FDFCFA]'}`}>
-                    <td className="px-4 py-3 font-mono text-[11px] text-[#8A7A6A]">{o.id?.slice(0, 8)}…</td>
+                    <td className="px-4 py-3 font-mono text-[11px] text-[#8A7A6A]">{o.order_number || `${o.id?.slice(0, 8)}…`}</td>
                     <td className="px-4 py-3 font-syndicatgrotesk text-[11px] text-[#8A7A6A]">
-                      {new Date(o.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
+                      {formatDateIST(o.created_at, { day: 'numeric', month: 'short' })}
                     </td>
                     <td className="px-4 py-3 font-brandon text-sm font-black text-[#1A1A1A]">
                       ₹{(o.total || 0).toLocaleString('en-IN')}

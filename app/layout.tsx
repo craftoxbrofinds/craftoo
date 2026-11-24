@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
-import { Analytics } from '@vercel/analytics/next'
+import { CookieConsent } from '@/components/cookie-consent'
+import { StaleBuildReload } from '@/components/stale-build-reload'
 import './globals.css'
 import localFont from "next/font/local";
 import { getSiteSettingServer } from '@/lib/site-settings'
@@ -46,10 +47,11 @@ export async function generateMetadata(): Promise<Metadata> {
     getSiteSettingServer('seo'),
   ])
 
-  const title = seo.title || brand.name || 'My Store'
-  const description = seo.description || 'Free shipping on orders above ₹599, and easy returns.'
+  const title = seo.title || brand.name || 'Craftoo'
+  const description = seo.description || 'Free shipping on orders of ₹1,000 and above, and easy returns.'
   const siteUrl = brand.site_url || 'https://example.com'
-  const favicon = brand.favicon_url || '/favicon.ico'
+  // There is no /favicon.ico, so fall back to the round Craftoo logo when settings don't set one.
+  const favicon = brand.favicon_url || '/images/logo/craftoo-logo-round-256.png'
 
   return {
     metadataBase: new URL(siteUrl),
@@ -85,7 +87,9 @@ export default function RootLayout({
       </head>
       <body className="font-brandon">
         {children}
-        <Analytics />
+        {/* Loads analytics only after the visitor accepts it. */}
+        <CookieConsent />
+        <StaleBuildReload />
       </body>
     </html>
   )

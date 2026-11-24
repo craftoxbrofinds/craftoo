@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+  <defs>
+    <linearGradient id="forestSky" x2="0" y2="1">
+      <stop stop-color="#bdb6df"/>
+      <stop offset=".58" stop-color="#e6c6d6"/>
+      <stop offset="1" stop-color="#f6ddb7"/>
+    </linearGradient>
+    <linearGradient id="forestHill" x2="0" y2="1">
+      <stop stop-color="#778e9c"/>
+      <stop offset="1" stop-color="#506f75"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="720" fill="url(#forestSky)"/>
+  <circle cx="1010" cy="145" r="52" fill="#fff1cd" opacity=".8"/>
+  <g fill="#e8e4f5" opacity=".56">
+    <path d="M92 203c-24 0-40-14-40-32 0-17 14-30 33-32 6-22 26-36 49-36 25 0 45 18 49 41 19 2 33 16 33 33 0 16-14 26-35 26H92z"/>
+  </g>
+  <path d="M0 428c145-82 249-45 371-104 144-70 239 14 356 20 130 7 211-74 335-45 93 21 161 66 218 109v312H0z" fill="#8d8cad"/>
+  <path d="M0 524c127-77 231-26 357-42 118-15 218-62 339-42 136 23 213-35 342-31 93 2 166 48 242 85v226H0z" fill="url(#forestHill)"/>
+  <g fill="#465f69">
+    <path d="M60 558l55-154 54 154h-29v82H88v-82z"/>
+    <path d="M175 580l71-208 72 208h-38v94h-68v-94z"/>
+    <path d="M966 572l63-183 64 183h-34v87h-60v-87z"/>
+    <path d="M1080 590l72-211 72 211h-38v91h-67v-91z"/>
+  </g>
+  <g fill="#638178">
+    <path d="M289 624l62-185 62 185h-34v75h-58v-75z"/>
+    <path d="M850 630l68-200 69 200h-39v77h-61v-77z"/>
+    <path d="M437 591l49-145 49 145h-26v60h-47v-60z"/>
+  </g>
+  <g fill="#ffe8a7" opacity=".88">
+    <circle cx="346" cy="291" r="4"/>
+    <circle cx="416" cy="350" r="3"/>
+    <circle cx="777" cy="268" r="4"/>
+    <circle cx="898" cy="330" r="3"/>
+    <circle cx="674" cy="404" r="4"/>
+    <circle cx="1115" cy="305" r="4"/>
+  </g>
+  <g fill="#e9afd0">
+    <circle cx="116" cy="533" r="7"/>
+    <circle cx="240" cy="615" r="6"/>
+    <circle cx="1048" cy="530" r="7"/>
+    <circle cx="1176" cy="615" r="6"/>
+  </g>
+</svg>

@@ -1,8 +1,11 @@
 import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
 import Link from 'next/link'
+import { WHATSAPP_NUMBER } from '@/lib/whatsapp-order'
 
 interface Section {
+  /** Anchor for links such as /policies/privacy#cookies. */
+  id?: string
   heading: string
   body: string | React.ReactNode
 }
@@ -39,14 +42,14 @@ export function PolicyLayout({ badge, title, lastUpdated, intro, sections, relat
         </div>
 
         {/* Intro */}
-        <p className="font-syndicatgrotesk text-sm text-ivory/70 leading-relaxed mb-12 pb-8 border-b border-white/8">
+        <p className="font-syndicatgrotesk text-sm text-ivory/70 leading-relaxed mb-12 pb-8 border-b border-[#e9e1ed]">
           {intro}
         </p>
 
         {/* Sections */}
         <div className="space-y-10">
           {sections.map((s, i) => (
-            <div key={i}>
+            <div key={i} id={s.id} className="scroll-mt-28">
               <h2 className="font-brandon text-base font-black uppercase tracking-[0.1em] text-ivory mb-3 flex items-center gap-3">
                 <span className="font-syndicatgrotesk text-[10px] text-rich-gold/60 font-normal normal-case tracking-[0.1em]">
                   {String(i + 1).padStart(2, '0')}
@@ -64,14 +67,14 @@ export function PolicyLayout({ badge, title, lastUpdated, intro, sections, relat
 
         {/* Related policies */}
         {relatedLinks && relatedLinks.length > 0 && (
-          <div className="mt-14 pt-8 border-t border-white/8">
+          <div className="mt-14 pt-8 border-t border-[#e9e1ed]">
             <p className="font-syndicatgrotesk text-[10px] tracking-[0.2em] uppercase text-rich-gold/70 mb-4">Related Policies</p>
             <div className="flex flex-wrap gap-3">
               {relatedLinks.map(l => (
                 <Link
                   key={l.href}
                   href={l.href}
-                  className="px-4 py-2 border border-white/10 font-syndicatgrotesk text-xs text-muted-taupe hover:border-rich-gold/40 hover:text-rich-gold transition-colors"
+                  className="px-4 py-2 border border-[#dccff0] bg-white font-syndicatgrotesk text-xs text-muted-taupe hover:border-rich-gold/40 hover:text-rich-gold transition-colors"
                 >
                   {l.label}
                 </Link>
@@ -81,16 +84,16 @@ export function PolicyLayout({ badge, title, lastUpdated, intro, sections, relat
         )}
 
         {/* Help CTA */}
-        <div className="mt-10 px-6 py-5 bg-[#111] border border-white/8 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+        <div className="mt-10 px-6 py-5 bg-white border border-[#dccff0] flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
           <div className="flex-1">
             <p className="font-brandon text-sm font-black uppercase tracking-tight text-ivory mb-1">Still have questions?</p>
             <p className="font-syndicatgrotesk text-xs text-muted-taupe">Our team is happy to help via WhatsApp or email.</p>
           </div>
           <a
-            href="https://wa.me/917259333254"
+            href={`https://wa.me/${WHATSAPP_NUMBER}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="shrink-0 px-5 py-2.5 bg-rich-gold text-[#0D0D0D] font-syndicatgrotesk text-[10px] font-bold tracking-[0.2em] uppercase hover:bg-[#B8860B] transition-colors text-center"
+            className="shrink-0 px-5 py-2.5 bg-[#7565a5] text-white font-syndicatgrotesk text-[10px] font-bold tracking-[0.2em] uppercase hover:bg-[#5b4d8a] transition-colors text-center"
           >
             WhatsApp Us
           </a>

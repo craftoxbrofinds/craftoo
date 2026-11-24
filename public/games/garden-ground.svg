@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 150" width="360" height="150">
+  <defs>
+    <linearGradient id="soil" x2="0" y2="1">
+      <stop stop-color="#9a765c"/>
+      <stop offset="1" stop-color="#795b4e"/>
+    </linearGradient>
+    <linearGradient id="grass" x2="0" y2="1">
+      <stop stop-color="#a9d492"/>
+      <stop offset="1" stop-color="#6fad80"/>
+    </linearGradient>
+  </defs>
+  <path d="M0 28c28-14 54 11 80 0 29-13 51 9 81 0 30-10 48 9 77 0 29-10 57 11 84 0 14-6 27-2 38 3v119H0z" fill="url(#soil)"/>
+  <path d="M0 28c28-14 54 11 80 0 29-13 51 9 81 0 30-10 48 9 77 0 29-10 57 11 84 0 14-6 27-2 38 3v24c-25-10-48 10-75 1-28-10-50 9-79 0-27-9-53 12-81 1-27-10-51 10-78 0-18-7-32-3-47 2z" fill="url(#grass)"/>
+  <g fill="#cfaa78" opacity=".55">
+    <ellipse cx="46" cy="93" rx="8" ry="4"/>
+    <ellipse cx="132" cy="126" rx="10" ry="4"/>
+    <ellipse cx="221" cy="89" rx="7" ry="4"/>
+    <ellipse cx="319" cy="120" rx="9" ry="4"/>
+  </g>
+  <g fill="#f3d37b" opacity=".85">
+    <circle cx="83" cy="83" r="3"/>
+    <circle cx="181" cy="109" r="3"/>
+    <circle cx="286" cy="75" r="3"/>
+  </g>
+</svg>

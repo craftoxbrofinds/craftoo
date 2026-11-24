@@ -42,7 +42,7 @@ export type SettingsMap = {
 
 export const SETTING_DEFAULTS: SettingsMap = {
   brand: {
-    name: 'My Store',
+    name: 'Craftoo',
     tagline: '',
     site_url: '',
     favicon_url: '/favicon.ico',
@@ -64,7 +64,7 @@ export const SETTING_DEFAULTS: SettingsMap = {
     enabled: true,
   },
   seo: {
-    title: 'My Store',
+    title: 'Craftoo',
     description: '',
     og_image: '',
   },

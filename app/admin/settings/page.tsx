@@ -288,7 +288,7 @@ export default function SettingsPage() {
                   label="WhatsApp Number"
                   value={contact.whatsapp}
                   onChange={e => setContact(p => ({ ...p, whatsapp: e.target.value }))}
-                  placeholder="+91 7259333254"
+                  placeholder="+91 91489 97472"
                   hint="Used for the floating WhatsApp button"
                 />
               </div>
@@ -440,7 +440,7 @@ export default function SettingsPage() {
                 label="Meta Description"
                 value={seo.description}
                 onChange={e => setSeo(p => ({ ...p, description: e.target.value }))}
-                placeholder="Free shipping on orders above ₹599. Easy 7-day returns. Shop handcrafted jewelry."
+                placeholder="Free shipping on orders of ₹1,000 and above. Easy 7-day returns. Shop handcrafted jewelry."
                 rows={3}
               />
               <Input
@@ -454,7 +454,7 @@ export default function SettingsPage() {
               {/* Live preview */}
               <div className="mt-2 p-4 bg-white/[0.03] border border-white/[0.06]">
                 <p className="font-syndicatgrotesk text-[9px] tracking-[0.2em] uppercase text-white/25 mb-3">Google Preview</p>
-                <p className="font-syndicatgrotesk text-[11px] text-blue-400 truncate">{seo.title || 'My Store'}</p>
+                <p className="font-syndicatgrotesk text-[11px] text-blue-400 truncate">{seo.title || 'Craftoo'}</p>
                 <p className="font-syndicatgrotesk text-[10px] text-green-400/60 mt-0.5">{brand.site_url || 'https://yourstore.com'}</p>
                 <p className="font-syndicatgrotesk text-[10px] text-white/40 mt-1 line-clamp-2">{seo.description || 'No description set.'}</p>
               </div>

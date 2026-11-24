@@ -12,6 +12,19 @@ export default function SignInPage() {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
 
+    const getReturnTo = () => {
+        const candidate = new URLSearchParams(window.location.search).get('returnTo')
+        if (!candidate || !candidate.startsWith('/')) return null
+        try {
+            const target = new URL(candidate, window.location.origin)
+            return target.origin === window.location.origin
+                ? `${target.pathname}${target.search}${target.hash}`
+                : null
+        } catch {
+            return null
+        }
+    }
+
     const handleLogin = async (e?: React.FormEvent) => {
         e?.preventDefault()
         setLoading(true)
@@ -44,7 +57,7 @@ export default function SignInPage() {
         if (userData?.role === 'admin') {
             router.push('/admin')
         } else {
-            router.push('/')
+            router.push(getReturnTo() ?? '/')
         }
     }
 
@@ -54,7 +67,7 @@ export default function SignInPage() {
             <div className="w-full max-w-md rounded-2xl border border-[#e8e0e7] bg-white p-7 shadow-[0_18px_55px_rgba(126,106,168,0.12)] sm:p-10">
 
                 {/* Brand */}
-                <img src="/images/logo/craftoo-logo.png" alt="Craftoo" className="mx-auto h-16 w-44 object-contain mix-blend-multiply" />
+                <img src="/images/logo/craftoo-logo-round-256.png" alt="Craftoo" width={88} height={88} className="mx-auto h-[88px] w-[88px] object-contain drop-shadow-[0_8px_18px_rgba(126,106,168,0.18)]" />
                 <p className="mt-4 text-center font-syndicatgrotesk text-[10px] font-semibold tracking-[0.24em] text-[#7e6aa8] uppercase">
                     Welcome back
                 </p>
@@ -112,7 +125,16 @@ export default function SignInPage() {
                 {/* Sign up link */}
                 <p className="text-center font-syndicatgrotesk text-sm text-[#756e6b]">
                     Don’t have an account?{' '}
-                    <a href="/signup" className="font-semibold text-[#7e6aa8] hover:underline">
+                    <a
+                        href="/signup"
+                        onClick={(event) => {
+                            const returnTo = getReturnTo()
+                            if (!returnTo) return
+                            event.preventDefault()
+                            router.push(`/signup?returnTo=${encodeURIComponent(returnTo)}`)
+                        }}
+                        className="font-semibold text-[#7e6aa8] hover:underline"
+                    >
                         Create one
                     </a>
                 </p>

@@ -3,7 +3,7 @@
 import { useSiteSettings } from '@/hooks/use-site-settings'
 
 const FALLBACK_MESSAGES = [
-  '✦ FREE SHIPPING on Orders Above ₹599',
+  '✦ FREE SHIPPING on Orders of ₹1,000 and Above',
   '✦ 20% OFF on Your First Order · Use: FIRST20',
   '✦ Easy 7-Day Returns — No Questions Asked',
   '✦ New Collection Arrived — Shop Now',

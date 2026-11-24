@@ -8,7 +8,7 @@ const signals = [
   {
     Icon: Truck,
     label: 'Free Shipping',
-    description: 'On all orders above ₹599',
+    description: 'On orders of ₹1,000 and above',
   },
   {
     Icon: Lock,

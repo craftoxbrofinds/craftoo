@@ -11,6 +11,7 @@ import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
 import { ProductCard } from '@/components/product-card'
 import { useCartStore } from '@/store/cart'
+import { useGiftExtras } from '@/store/gift-extras'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 
@@ -56,6 +57,7 @@ export default function ProductDetailPage() {
   const [qty, setQty] = useState(1)
 
   const { addToCart } = useCartStore()
+  const showAdded = useGiftExtras(state => state.showAdded)
 
   useEffect(() => {
     setActiveImg(0)
@@ -100,6 +102,9 @@ export default function ProductDetailPage() {
       } else {
         setAddedFeedback(true)
         setTimeout(() => setAddedFeedback(false), 2000)
+        if (product) {
+          showAdded({ id, name: product.name, price: product.price, image: getFirstImage(product.image), quantity: qty })
+        }
       }
     } catch (err: any) {
       alert(err.message)
@@ -365,7 +370,7 @@ export default function ProductDetailPage() {
               {[
                 { Icon: Shield,     label: 'Secure Payment' },
                 { Icon: RotateCcw,  label: '7-Day Returns' },
-                { Icon: Truck,      label: 'Free Shipping' },
+                { Icon: Truck,      label: 'Free Shipping ₹1,000+' },
                 { Icon: BadgeCheck, label: 'Handmade With Care' },
               ].map(({ Icon, label }) => (
                 <div key={label} className="flex items-center gap-2 px-3 py-2.5 bg-white border border-border-light">
@@ -424,7 +429,7 @@ export default function ProductDetailPage() {
                 <div className="mt-5 flex items-start gap-2.5 p-3 bg-soft-cream border border-border-light">
                   <Package size={13} className="text-deep-gold shrink-0 mt-0.5" />
                   <p className="font-syndicatgrotesk text-[10px] text-text-muted leading-relaxed">
-                    Ships within 2–5 business days. Free delivery on orders above ₹599.
+                    Ships within 2–5 business days. Free delivery on orders of ₹1,000 and above.
                   </p>
                 </div>
               </div>

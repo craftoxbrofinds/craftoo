@@ -8,17 +8,20 @@ import { categoryService } from '@/services/category.service'
 import { supabase } from '@/lib/supabase'
 import { useCartStore } from '@/store/cart'
 import { CartDrawer } from '@/components/cart-drawer'
+import { AddedToCartDialog } from '@/components/added-to-cart-dialog'
 import { useSiteSettings } from '@/hooks/use-site-settings'
+import { useGiftExtras } from '@/store/gift-extras'
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
-  const [session, setSession] = useState<any>(null)
+  // undefined until Supabase reports whether anyone is signed in.
+  const [session, setSession] = useState<any>(undefined)
   const [navLinks, setNavLinks] = useState<{ name: string; slug: string; image?: string | null }[]>([])
   const router = useRouter()
-  const { items, setIsOpen, fetchCart } = useCartStore()
+  const { items, setIsOpen, fetchCart, clearCart } = useCartStore()
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -40,8 +43,12 @@ export function Navbar() {
   }, [])
 
   useEffect(() => {
+    if (session === undefined) return
+    // Gift extras are kept per account, so another account on this device starts with none.
+    useGiftExtras.getState().setOwner(session?.user?.id ?? null)
     if (session) fetchCart(session.access_token)
-  }, [session])
+    else clearCart()
+  }, [session, fetchCart, clearCart])
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10)
@@ -69,6 +76,7 @@ export function Navbar() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
+    useGiftExtras.getState().setOwner(null)
     router.push('/signin')
   }
 
@@ -217,12 +225,18 @@ export function Navbar() {
                 )}
               </button>
 
+              {/* Profile, next to the cart on every screen size. Signed-out shoppers go to sign in first. */}
+              <Link
+                href={session ? '/profile' : '/signin?returnTo=/profile'}
+                className="p-2 text-muted-taupe hover:text-rich-gold transition-colors"
+                aria-label="My profile"
+                title="My profile"
+              >
+                <User size={17} />
+              </Link>
+
               {session ? (
                 <div className="hidden sm:flex items-center gap-1">
-                  {/* Temporarily hidden: customer orders shortcut. */}
-                  {/* <a href="/orders" className="p-2 text-muted-taupe hover:text-rich-gold transition-colors" aria-label="Orders">
-                    <User size={17} />
-                  </a> */}
                   <button
                     onClick={handleLogout}
                     className="px-2 py-1 font-syndicatgrotesk text-[9px] tracking-widest uppercase text-muted-taupe/60 hover:text-red-400 transition-colors"
@@ -269,10 +283,12 @@ export function Navbar() {
               <div className="pt-3 border-t border-border-gold mt-2">
                 {session ? (
                   <>
-                    {/* Temporarily hidden: My Orders menu item. */}
-                    {/* <a href="/orders" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-2 text-xs uppercase tracking-widest text-muted-taupe/70 hover:text-ivory font-syndicatgrotesk">
+                    <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-2 text-xs uppercase tracking-widest text-muted-taupe hover:text-rich-gold font-syndicatgrotesk">
+                      My Profile
+                    </Link>
+                    <Link href="/orders" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-2 text-xs uppercase tracking-widest text-muted-taupe hover:text-rich-gold font-syndicatgrotesk">
                       My Orders
-                    </a> */}
+                    </Link>
                     <button onClick={handleLogout} className="block w-full text-left px-3 py-2 text-xs uppercase tracking-widest text-red-400 font-syndicatgrotesk">
                       Logout
                     </button>
@@ -288,6 +304,7 @@ export function Navbar() {
         )}
       </nav>
       <CartDrawer />
+      <AddedToCartDialog />
 
       {/* Temporarily hidden: customer search overlay. */}
       {false && isSearchOpen && (

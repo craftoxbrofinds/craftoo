@@ -1,6 +1,6 @@
 import { PolicyLayout } from '@/components/policy-layout'
 
-export const metadata = { title: 'Shipping Policy — Brofinds' }
+export const metadata = { title: 'Shipping Policy — Craftoo' }
 
 export default function ShippingPolicy() {
   return (
@@ -37,7 +37,7 @@ export default function ShippingPolicy() {
         },
         {
           heading: 'Shipping Charges',
-          body: 'We offer free shipping on all orders above ₹599 across India. No hidden charges will be added at checkout.',
+          body: 'We offer free shipping across India on orders of ₹1,000 and above (product total before any coupon). For smaller orders, the delivery charge is added to the final bill we send you on WhatsApp before you pay.',
         },
         {
           heading: 'Order Tracking',
@@ -49,7 +49,7 @@ export default function ShippingPolicy() {
         },
         {
           heading: 'Address Accuracy',
-          body: 'Please ensure your delivery address is complete and accurate at checkout — including flat/house number, street name, landmark, city, state, and PIN code. Brofinds is not responsible for delays or failed deliveries caused by an incorrect or incomplete address.',
+          body: 'Please ensure your delivery address is complete and accurate at checkout — including flat/house number, street name, landmark, city, state, and PIN code. Craftoo is not responsible for delays or failed deliveries caused by an incorrect or incomplete address.',
         },
         {
           heading: 'Failed Delivery Attempts',

@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+  <defs>
+    <linearGradient id="castleSky" x2="0" y2="1">
+      <stop stop-color="#a7bce0"/>
+      <stop offset=".52" stop-color="#e0c3dc"/>
+      <stop offset="1" stop-color="#ffdfb4"/>
+    </linearGradient>
+    <linearGradient id="castleHill" x2="0" y2="1">
+      <stop stop-color="#9ab69e"/>
+      <stop offset="1" stop-color="#6e937b"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="720" fill="url(#castleSky)"/>
+  <circle cx="1070" cy="150" r="65" fill="#fff2c9" opacity=".78"/>
+  <g fill="#fff" opacity=".64">
+    <path d="M126 175c-25 0-42-15-42-34 0-18 15-32 35-34 7-24 27-39 52-39 26 0 47 19 51 43 20 3 35 17 35 35 0 17-15 29-37 29H126z"/>
+  </g>
+  <path d="M0 456c147-73 257-22 388-69 129-47 242-19 359 14 126 36 221-57 339-33 86 18 145 48 194 83v269H0z" fill="#b9b3d1"/>
+  <path d="M0 535c147-55 259 8 381-23 134-35 229-44 367-4 127 36 217-39 351-26 70 7 127 33 181 62v176H0z" fill="url(#castleHill)"/>
+  <g fill="#816c9d" stroke="#705a8d" stroke-width="4" stroke-linejoin="round">
+    <path d="M725 423V278l67-80 68 80v145z"/>
+    <path d="M821 423V239l87-106 88 106v184z"/>
+    <path d="M936 423V282l61-73 60 73v141z"/>
+    <path d="M684 424h448v116H684z"/>
+  </g>
+  <g fill="#f3d37e">
+    <path d="M783 284h20v42h-20zM894 251h22v48h-22zM987 288h19v39h-19z"/>
+    <path d="M846 420h54v120h-54z"/>
+  </g>
+  <g fill="#d88bb4">
+    <path d="M786 228l6-48 24 31 24-31 7 48z"/>
+    <path d="M892 180l17-49 19 49z"/>
+    <path d="M980 239l16-40 18 40z"/>
+  </g>
+  <g fill="#668c70">
+    <path d="M116 581l47-138 48 138h-27v65h-41v-65z"/>
+    <path d="M271 611l58-170 58 170h-32v71h-51v-71z"/>
+    <path d="M1128 604l53-155 52 155h-29v68h-47v-68z"/>
+  </g>
+  <g fill="#fff1d2">
+    <circle cx="159" cy="531" r="5"/>
+    <circle cx="315" cy="581" r="5"/>
+    <circle cx="1172" cy="552" r="5"/>
+  </g>
+</svg>

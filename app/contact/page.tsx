@@ -1,146 +1,96 @@
+import Link from 'next/link'
+import { Clock, Mail, MapPin, MessageCircle, Phone } from 'lucide-react'
 import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
 import { getSiteSettingServer } from '@/lib/site-settings'
+import { WHATSAPP_NUMBER } from '@/lib/whatsapp-order'
+
+export const revalidate = 300
 
 export async function generateMetadata() {
   const brand = await getSiteSettingServer('brand')
-  return { title: `Contact Us — ${brand.name || 'Brofinds'}` }
+  return { title: `Contact Us — ${brand.name || 'Craftoo'}` }
+}
+
+/** "+91 91489 97472" from "919148997472". */
+function formatIndianNumber(digits: string): string {
+  const local = digits.replace(/^91(?=\d{10}$)/, '')
+  return /^\d{10}$/.test(local) ? `+91 ${local.slice(0, 5)} ${local.slice(5)}` : `+${digits}`
 }
 
 export default async function ContactPage() {
-  const contact = await getSiteSettingServer('contact')
-  const brand = await getSiteSettingServer('brand')
+  const [contact, brand] = await Promise.all([getSiteSettingServer('contact'), getSiteSettingServer('brand')])
+  const storeName = brand.name || 'Craftoo'
 
-  const storeName = brand.name || 'Brofinds'
-  const phone = contact.phone || ''
-  const whatsapp = contact.whatsapp || contact.phone || ''
-  const email = contact.email || ''
-  const address = contact.address || ''
-  const hours = contact.hours || ''
-  const waNumber = whatsapp.replace(/[^0-9]/g, '')
+  // WhatsApp and phone fall back to the number orders are sent to, so customers can always reach us.
+  const waDigits = (contact.whatsapp || contact.phone || '').replace(/[^0-9]/g, '') || WHATSAPP_NUMBER
+  const whatsappLabel = contact.whatsapp || formatIndianNumber(waDigits)
+  const phoneLabel = contact.phone || formatIndianNumber(waDigits)
+  const phoneHref = `tel:${(contact.phone || `+${waDigits}`).replace(/[^\d+]/g, '')}`
+  const whatsappHref = `https://wa.me/${waDigits}?text=${encodeURIComponent(`Hello ${storeName}, I have a question.`)}`
+
+  const rows = [
+    { Icon: MessageCircle, title: 'WhatsApp', body: <a href={whatsappHref} target="_blank" rel="noopener noreferrer" className="hover:text-rich-gold">{whatsappLabel}</a>, note: 'The quickest way to reach us, for orders, custom requests and anything else.' },
+    { Icon: Phone, title: 'Phone', body: <a href={phoneHref} className="hover:text-rich-gold">{phoneLabel}</a> },
+    ...(contact.email ? [{ Icon: Mail, title: 'Email', body: <a href={`mailto:${contact.email}`} className="break-all hover:text-rich-gold">{contact.email}</a> }] : []),
+    ...(contact.address ? [{ Icon: MapPin, title: 'Address', body: <span className="whitespace-pre-line">{contact.address}</span> }] : []),
+    ...(contact.hours ? [{ Icon: Clock, title: 'Hours', body: <span className="whitespace-pre-line">{contact.hours}</span> }] : []),
+  ]
 
   return (
     <div className="min-h-screen bg-site-black">
       <Navbar />
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
-
-        {/* Header */}
-        <div className="mb-12">
+        <div className="mb-10">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-px bg-gradient-to-r from-transparent to-rich-gold" />
-            <span className="font-syndicatgrotesk text-[9px] tracking-[0.35em] uppercase text-rich-gold/80">Get in Touch</span>
+            <span className="font-syndicatgrotesk text-[9px] tracking-[0.35em] uppercase text-rich-gold">Get in Touch</span>
             <div className="w-10 h-px bg-gradient-to-l from-transparent to-rich-gold" />
           </div>
-          <h1 className="font-brandon text-3xl sm:text-4xl font-black uppercase tracking-tight text-ivory mb-3">
-            Contact Us
-          </h1>
-          <p className="font-syndicatgrotesk text-sm text-ivory/70 leading-relaxed mt-6">
-            We&apos;re here to help. Reach out to us via WhatsApp, email, or visit our store.
+          <h1 className="font-brandon text-3xl sm:text-4xl font-black uppercase tracking-tight text-ivory mb-3">Contact Us</h1>
+          <p className="font-syndicatgrotesk text-sm text-muted-taupe leading-relaxed">
+            Questions about a gift, a custom order or an order you’ve placed? We’re happy to help.
           </p>
         </div>
 
-        <div className="space-y-10">
-
-          {address && (
-            <div>
-              <h2 className="font-brandon text-base font-black uppercase tracking-[0.1em] text-ivory mb-3 flex items-center gap-3">
-                <span className="font-syndicatgrotesk text-[10px] text-rich-gold/60 font-normal normal-case tracking-[0.1em]">01</span>
-                Store Address
-              </h2>
-              <p className="font-syndicatgrotesk text-sm text-muted-taupe leading-relaxed whitespace-pre-line">
-                {address}
-              </p>
-            </div>
-          )}
-
-          {phone && (
-            <div>
-              <h2 className="font-brandon text-base font-black uppercase tracking-[0.1em] text-ivory mb-3 flex items-center gap-3">
-                <span className="font-syndicatgrotesk text-[10px] text-rich-gold/60 font-normal normal-case tracking-[0.1em]">02</span>
-                Phone
-              </h2>
-              <a
-                href={`tel:${phone.replace(/\s/g, '')}`}
-                className="font-syndicatgrotesk text-sm text-muted-taupe hover:text-rich-gold transition-colors"
-              >
-                {phone}
-              </a>
-            </div>
-          )}
-
-          {waNumber && (
-            <div>
-              <h2 className="font-brandon text-base font-black uppercase tracking-[0.1em] text-ivory mb-3 flex items-center gap-3">
-                <span className="font-syndicatgrotesk text-[10px] text-rich-gold/60 font-normal normal-case tracking-[0.1em]">03</span>
-                WhatsApp
-              </h2>
-              <a
-                href={`https://wa.me/${waNumber}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-syndicatgrotesk text-sm text-muted-taupe hover:text-rich-gold transition-colors"
-              >
-                {whatsapp}
-              </a>
-            </div>
-          )}
-
-          {email && (
-            <div>
-              <h2 className="font-brandon text-base font-black uppercase tracking-[0.1em] text-ivory mb-3 flex items-center gap-3">
-                <span className="font-syndicatgrotesk text-[10px] text-rich-gold/60 font-normal normal-case tracking-[0.1em]">04</span>
-                Email
-              </h2>
-              <a
-                href={`mailto:${email}`}
-                className="font-syndicatgrotesk text-sm text-muted-taupe hover:text-rich-gold transition-colors"
-              >
-                {email}
-              </a>
-            </div>
-          )}
-
-          {hours && (
-            <div>
-              <h2 className="font-brandon text-base font-black uppercase tracking-[0.1em] text-ivory mb-3 flex items-center gap-3">
-                <span className="font-syndicatgrotesk text-[10px] text-rich-gold/60 font-normal normal-case tracking-[0.1em]">05</span>
-                Business Hours
-              </h2>
-              <p className="font-syndicatgrotesk text-sm text-muted-taupe leading-relaxed">
-                {hours}
-              </p>
-            </div>
-          )}
-
+        {/* WhatsApp first: it's how orders are confirmed */}
+        <div className="mb-8 flex flex-col gap-4 border border-[#dccff0] bg-white px-6 py-5 sm:flex-row sm:items-center sm:gap-6">
+          <div className="flex-1">
+            <p className="font-brandon text-sm font-black uppercase tracking-tight text-ivory mb-1">Chat with us on WhatsApp</p>
+            <p className="font-syndicatgrotesk text-xs text-muted-taupe">Message us any time and our team will reply as soon as we can.</p>
+          </div>
+          <a
+            href={whatsappHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex shrink-0 items-center justify-center gap-2 bg-[#1f8f4e] px-5 py-3 font-syndicatgrotesk text-[10px] font-bold uppercase tracking-[0.2em] text-white transition-colors hover:bg-[#177a41]"
+          >
+            <MessageCircle size={14} aria-hidden="true" /> WhatsApp us
+          </a>
         </div>
 
-        {waNumber && (
-          <div className="mt-14 px-6 py-5 bg-[#111] border border-white/8 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
-            <div className="flex-1">
-              <p className="font-brandon text-sm font-black uppercase tracking-tight text-ivory mb-1">Chat with us on WhatsApp</p>
-              <p className="font-syndicatgrotesk text-xs text-muted-taupe">Quick replies, 7 days a week.</p>
-            </div>
-            <a
-              href={`https://wa.me/${waNumber}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="shrink-0 px-5 py-2.5 bg-rich-gold text-[#0D0D0D] font-syndicatgrotesk text-[10px] font-bold tracking-[0.2em] uppercase hover:bg-[#B8860B] transition-colors text-center"
-            >
-              WhatsApp Us
-            </a>
-          </div>
-        )}
+        <ul className="divide-y divide-[#e9e1ed] border border-[#e9e1ed] bg-white">
+          {rows.map(({ Icon, title, body, note }) => (
+            <li key={title} className="flex gap-4 px-6 py-5">
+              <span className="grid h-9 w-9 shrink-0 place-items-center bg-[#f4eefb] text-rich-gold">
+                <Icon size={16} aria-hidden="true" />
+              </span>
+              <div className="min-w-0 font-syndicatgrotesk">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-muted-taupe">{title}</p>
+                <div className="mt-0.5 text-sm text-ivory">{body}</div>
+                {note && <p className="mt-1 text-xs leading-5 text-muted-taupe">{note}</p>}
+              </div>
+            </li>
+          ))}
+        </ul>
 
-        {!phone && !email && !address && (
-          <div className="mt-8 p-6 bg-[#111] border border-white/8 text-center">
-            <p className="font-syndicatgrotesk text-sm text-muted-taupe">
-              Contact details not configured yet.{' '}
-              <a href="/admin/settings" className="text-rich-gold hover:underline">Set them in Admin → Settings</a>
-            </p>
-          </div>
-        )}
-
+        <p className="mt-8 font-syndicatgrotesk text-xs leading-6 text-muted-taupe">
+          Placed an order? You can see its status in{' '}
+          <Link href="/orders" className="text-rich-gold hover:underline">My Orders</Link>. See also our{' '}
+          <Link href="/policies/shipping" className="text-rich-gold hover:underline">Shipping Policy</Link> and{' '}
+          <Link href="/policies/terms" className="text-rich-gold hover:underline">Terms &amp; Conditions</Link>.
+        </p>
       </div>
 
       <Footer />
