@@ -172,7 +172,16 @@ export default function ProductDetailPage() {
           {/* LEFT — Images */}
           <div className="flex flex-col gap-3 lg:sticky lg:top-6">
             {/* Main image */}
-            <div className="relative aspect-square bg-soft-cream border border-border-light overflow-hidden">
+            <div className="relative aspect-4/5 bg-soft-cream border border-border-light overflow-hidden">
+              {/* Blurred copy fills the frame, so the whole photo can show without being cropped. */}
+              {images.length > 0 && (
+                <img
+                  src={images[activeImg]}
+                  alt=""
+                  aria-hidden="true"
+                  className="absolute inset-0 w-full h-full object-cover scale-110 blur-2xl opacity-40"
+                />
+              )}
               <AnimatePresence mode="wait">
                 {images.length > 0 ? (
                   <motion.img
@@ -183,7 +192,7 @@ export default function ProductDetailPage() {
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.3 }}
-                    className="w-full h-full object-cover"
+                    className="relative w-full h-full object-contain"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">

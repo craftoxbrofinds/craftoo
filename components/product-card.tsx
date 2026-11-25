@@ -75,15 +75,26 @@ export function ProductCard({
       } transition-colors duration-300`}
     >
       {/* Image container */}
-      <div className="relative aspect-square overflow-hidden">
+      <div className="relative aspect-3/4 overflow-hidden">
         <div className={`absolute inset-0 ${isDark ? 'bg-section-dark' : 'bg-warm-beige/60'}`} />
 
         {image ? (
-          <img
-            src={image}
-            alt={name}
-            className={`relative z-10 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.08] ${outOfStock ? 'grayscale opacity-60' : ''}`}
-          />
+          <>
+            {/* Blurred copy fills the frame, so the whole photo can show without being cropped. */}
+            <img
+              src={image}
+              alt=""
+              aria-hidden="true"
+              className={`absolute inset-0 w-full h-full object-cover scale-110 blur-xl opacity-50 ${outOfStock ? 'grayscale' : ''}`}
+            />
+            <img
+              src={image}
+              alt={name}
+              loading="lazy"
+              decoding="async"
+              className={`relative z-10 w-full h-full object-contain transition-transform duration-700 group-hover:scale-[1.04] ${outOfStock ? 'grayscale opacity-60' : ''}`}
+            />
+          </>
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
             <span className="font-syndicatgrotesk text-xs tracking-widest uppercase text-muted-taupe/50">
