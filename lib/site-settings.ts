@@ -32,12 +32,21 @@ export type SeoSettings = {
   og_image: string
 }
 
+export type OrderSettings = {
+  /**
+   * On: after the order is saved, the shopper's WhatsApp opens with the order message.
+   * Off: the order is saved and the shopper sees an "order placed" screen; staff contact them.
+   */
+  whatsapp_checkout: boolean
+}
+
 export type SettingsMap = {
   brand: BrandSettings
   contact: ContactSettings
   social: SocialSettings
   announcement: AnnouncementSettings
   seo: SeoSettings
+  orders: OrderSettings
 }
 
 export const SETTING_DEFAULTS: SettingsMap = {
@@ -67,6 +76,9 @@ export const SETTING_DEFAULTS: SettingsMap = {
     title: 'Craftoo',
     description: '',
     og_image: '',
+  },
+  orders: {
+    whatsapp_checkout: true,
   },
 }
 

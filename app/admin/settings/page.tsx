@@ -10,11 +10,21 @@ import {
   type SocialSettings,
   type AnnouncementSettings,
   type SeoSettings,
+  type OrderSettings,
 } from '@/lib/site-settings'
 
-type Tab = 'brand' | 'contact' | 'social' | 'announcement' | 'seo'
+type Tab = 'brand' | 'contact' | 'social' | 'announcement' | 'seo' | 'orders'
 
 const TABS: { key: Tab; label: string; icon: React.ReactNode }[] = [
+  {
+    key: 'orders',
+    label: 'Orders',
+    icon: (
+      <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" /><path d="M3 6h18" /><path d="M16 10a4 4 0 0 1-8 0" />
+      </svg>
+    ),
+  },
   {
     key: 'brand',
     label: 'Brand',
@@ -136,10 +146,12 @@ function SaveButton({
 }
 
 export default function SettingsPage() {
-  const [tab, setTab] = useState<Tab>('brand')
+  const [tab, setTab] = useState<Tab>('orders')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState<Tab | null>(null)
+  const [saveError, setSaveError] = useState('')
+  const [orders, setOrders] = useState<OrderSettings>(SETTING_DEFAULTS.orders)
 
   const [brand, setBrand] = useState<BrandSettings>(SETTING_DEFAULTS.brand)
   const [contact, setContact] = useState<ContactSettings>(SETTING_DEFAULTS.contact)
@@ -153,7 +165,7 @@ export default function SettingsPage() {
       const { data } = await supabase
         .from('site_settings')
         .select('key, value')
-        .in('key', ['brand', 'contact', 'social', 'announcement', 'seo'])
+        .in('key', ['brand', 'contact', 'social', 'announcement', 'seo', 'orders'])
 
       if (data) {
         for (const row of data) {
@@ -163,6 +175,7 @@ export default function SettingsPage() {
           if (row.key === 'social') setSocial({ ...SETTING_DEFAULTS.social, ...val })
           if (row.key === 'announcement') setAnnouncement({ ...SETTING_DEFAULTS.announcement, ...val })
           if (row.key === 'seo') setSeo({ ...SETTING_DEFAULTS.seo, ...val })
+          if (row.key === 'orders') setOrders({ ...SETTING_DEFAULTS.orders, ...val })
         }
       }
       setLoading(false)
@@ -172,11 +185,24 @@ export default function SettingsPage() {
 
   async function save(key: Tab, value: unknown) {
     setSaving(true)
-    await supabase.from('site_settings').upsert({ key, value })
-    bustSettingsCache(key)
-    setSaving(false)
-    setSaved(key)
-    setTimeout(() => setSaved(null), 2500)
+    setSaveError('')
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      const res = await fetch('/api/admin/settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session?.access_token ?? ''}` },
+        body: JSON.stringify({ key, value }),
+      })
+      const body = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(body.error || 'Could not save. Please try again.')
+      bustSettingsCache(key)
+      setSaved(key)
+      setTimeout(() => setSaved(null), 2500)
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : 'Could not save. Please try again.')
+    } finally {
+      setSaving(false)
+    }
   }
 
   function addMessage() {
@@ -231,6 +257,50 @@ export default function SettingsPage() {
         </div>
 
         <div className="p-6 space-y-5">
+
+          {saveError && (
+            <p role="alert" className="px-3 py-2 border border-red-400/30 bg-red-500/10 font-syndicatgrotesk text-xs text-red-300">
+              {saveError}
+            </p>
+          )}
+
+          {/* ── ORDERS ── */}
+          {tab === 'orders' && (
+            <>
+              <div className="space-y-1 pb-4 border-b border-white/[0.06]">
+                <p className="font-brandon text-sm font-black tracking-[0.15em] uppercase text-white">Checkout</p>
+                <p className="font-syndicatgrotesk text-[9px] text-white/30 tracking-wider">How shoppers finish placing an order. Every order is saved either way and shows in Orders and in the customer&apos;s My Orders.</p>
+              </div>
+
+              <label className="flex items-start justify-between gap-6 cursor-pointer">
+                <div className="space-y-1.5">
+                  <p className="font-syndicatgrotesk text-xs font-semibold text-white/85">Send orders on WhatsApp</p>
+                  <p className="font-syndicatgrotesk text-[11px] leading-5 text-white/40">
+                    {orders.whatsapp_checkout
+                      ? 'On: after placing the order, the shopper’s WhatsApp opens with the order details ready to send to you.'
+                      : 'Off: the shopper taps “Place order” and sees an order placed screen saying the Craftoo team will contact them. WhatsApp does not open.'}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 shrink-0 mt-0.5">
+                  <div className="relative">
+                    <input
+                      type="checkbox"
+                      checked={orders.whatsapp_checkout}
+                      onChange={e => setOrders(p => ({ ...p, whatsapp_checkout: e.target.checked }))}
+                      className="sr-only peer"
+                    />
+                    <div className="w-10 h-5 bg-white/10 peer-checked:bg-[#D4A017]/40 rounded-full transition-colors" />
+                    <div className="absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white/30 peer-checked:bg-[#D4A017] peer-checked:translate-x-5 transition-all" />
+                  </div>
+                  <span className="font-syndicatgrotesk text-[9px] tracking-widest uppercase text-white/30 w-6">
+                    {orders.whatsapp_checkout ? 'On' : 'Off'}
+                  </span>
+                </div>
+              </label>
+
+              <SaveButton saving={saving} saved={saved === 'orders'} onClick={() => save('orders', orders)} />
+            </>
+          )}
 
           {/* ── BRAND ── */}
           {tab === 'brand' && (

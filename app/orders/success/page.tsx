@@ -69,7 +69,7 @@ function SuccessContent() {
 
         <div className="flex items-center justify-center gap-3 mb-3">
           <div className="w-10 h-px bg-gradient-to-r from-transparent to-deep-gold" />
-          <span className="font-syndicatgrotesk text-[9px] tracking-[0.35em] uppercase text-deep-gold/80">Order Confirmed</span>
+          <span className="font-syndicatgrotesk text-[9px] tracking-[0.35em] uppercase text-deep-gold/80">Order Placed</span>
           <div className="w-10 h-px bg-gradient-to-l from-transparent to-deep-gold" />
         </div>
 
@@ -77,7 +77,7 @@ function SuccessContent() {
           Thank You!
         </h1>
         <p className="font-syndicatgrotesk text-sm text-muted-taupe leading-relaxed">
-          Your payment was successful. We'll start preparing your order right away.
+          Your order has been placed. The Craftoo team will contact you soon to confirm your order and the final bill.
         </p>
       </div>
 
@@ -104,7 +104,7 @@ function SuccessContent() {
               </span>
             </div>
             <div>
-              <p className="font-syndicatgrotesk text-[9px] tracking-[0.2em] uppercase text-muted-taupe mb-1">Total Paid</p>
+              <p className="font-syndicatgrotesk text-[9px] tracking-[0.2em] uppercase text-muted-taupe mb-1">Order Total</p>
               <p className="font-brandon text-lg font-black text-deep-gold">₹{(order.total || 0).toLocaleString('en-IN')}</p>
             </div>
           </div>
@@ -155,9 +155,9 @@ function SuccessContent() {
         <p className="font-syndicatgrotesk text-[10px] tracking-[0.2em] uppercase text-deep-gold/80 mb-4">What Happens Next</p>
         <div className="space-y-3">
           {[
-            { step: '01', text: 'Order confirmation SMS & email sent to you' },
+            { step: '01', text: 'The Craftoo team contacts you to confirm your order and the final bill' },
             { step: '02', text: 'Our team prepares your handmade gift with care' },
-            { step: '03', text: 'Shipped with tracking within 2–3 business days' },
+            { step: '03', text: 'Your order is shipped to you' },
             { step: '04', text: 'Delivered safely to your doorstep' },
           ].map(s => (
             <div key={s.step} className="flex items-start gap-3">

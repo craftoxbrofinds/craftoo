@@ -68,6 +68,15 @@ export default function CheckoutPage() {
   const [pageLoading, setPageLoading] = useState(true)
   const [error, setError] = useState('')
   const errorRef = useRef<HTMLDivElement>(null)
+  // Admin setting (Settings → Orders). On: WhatsApp opens with the order message after the order is
+  // saved. Off: the order is saved and the shopper sees the order placed screen instead.
+  const [whatsappCheckout, setWhatsappCheckout] = useState(true)
+
+  useEffect(() => {
+    // Read fresh on every visit so a change in admin applies straight away.
+    supabase.from('site_settings').select('value').eq('key', 'orders').maybeSingle()
+      .then(({ data }) => setWhatsappCheckout((data?.value as { whatsapp_checkout?: boolean } | undefined)?.whatsapp_checkout !== false))
+  }, [])
 
   useEffect(() => {
     const init = async () => {
@@ -325,7 +334,7 @@ export default function CheckoutPage() {
     setPlacedBefore(null)
     // Open the WhatsApp tab now, while this is still the shopper's tap: browsers block a new tab
     // opened after the order request finishes. It is pointed at WhatsApp once the order is saved.
-    const whatsappTab = window.open('', '_blank')
+    const whatsappTab = whatsappCheckout ? window.open('', '_blank') : null
     const fail = (message: string) => {
       whatsappTab?.close()
       setReviewError(message)
@@ -362,6 +371,15 @@ export default function CheckoutPage() {
 
     if (response.ok) {
       const placed = body as PlacedOrder
+
+      if (!whatsappCheckout) {
+        // The order is saved; staff will contact the shopper. Show the order placed screen.
+        clearCart()
+        useGiftExtras.getState().keepOnly([])
+        router.replace(`/orders/success?orderId=${encodeURIComponent(placed.orderId)}`)
+        return
+      }
+
       const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(buildMessage(placed))}`
       let whatsappOpened = false
       if (whatsappTab && !whatsappTab.closed) {
@@ -498,7 +516,11 @@ export default function CheckoutPage() {
         <span className="font-brandon text-lg font-black text-warm-black">{rupees(shownTotal)}</span>
       </div>
       {estimated && (
-        <p className="text-[10px] leading-4">Our team will confirm the final bill on WhatsApp before you pay.</p>
+        <p className="text-[10px] leading-4">
+          {whatsappCheckout
+            ? 'Our team will confirm the final bill on WhatsApp before you pay.'
+            : 'Our team will contact you to confirm the final bill before you pay.'}
+        </p>
       )}
     </div>
   )
@@ -810,14 +832,14 @@ export default function CheckoutPage() {
                       <p>{reviewError}</p>
                       {placedBefore && (
                         <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5">
-                          <a
+                          {whatsappCheckout && <a
                             href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
                               `Hello Craftoo, I placed order ${placedBefore.ref}${placedBefore.couponCode ? ` with coupon ${placedBefore.couponCode}` : ''} and would like to check on it.`,
                             )}`}
                             className="inline-flex items-center gap-1.5 font-semibold text-warm-black underline underline-offset-2 hover:text-deep-gold"
                           >
                             <MessageCircle size={13} aria-hidden="true" /> Message us about order {placedBefore.ref}
-                          </a>
+                          </a>}
                           <Link href="/orders" className="font-semibold text-warm-black underline underline-offset-2 hover:text-deep-gold">
                             View my orders
                           </Link>
@@ -839,11 +861,17 @@ export default function CheckoutPage() {
                       type="button"
                       onClick={sendOrder}
                       disabled={sending}
-                      className="inline-flex flex-1 items-center justify-center gap-2 bg-[#1f8f4e] px-6 py-4 font-syndicatgrotesk text-[11px] font-bold uppercase tracking-[0.22em] text-white transition-colors hover:bg-[#177a41] disabled:opacity-60"
+                      className={`inline-flex flex-1 items-center justify-center gap-2 px-6 py-4 font-syndicatgrotesk text-[11px] font-bold uppercase tracking-[0.22em] text-white transition-colors disabled:opacity-60 ${
+                        whatsappCheckout ? 'bg-[#1f8f4e] hover:bg-[#177a41]' : 'bg-site-black hover:bg-deep-gold'
+                      }`}
                     >
-                      {sending
-                        ? <><Loader2 size={14} className="animate-spin" aria-hidden="true" /> Opening WhatsApp…</>
-                        : <><MessageCircle size={15} aria-hidden="true" /> Place order on WhatsApp</>}
+                      {whatsappCheckout
+                        ? sending
+                          ? <><Loader2 size={14} className="animate-spin" aria-hidden="true" /> Opening WhatsApp…</>
+                          : <><MessageCircle size={15} aria-hidden="true" /> Place order on WhatsApp</>
+                        : sending
+                          ? <><Loader2 size={14} className="animate-spin" aria-hidden="true" /> Placing order…</>
+                          : <><ShoppingBag size={15} aria-hidden="true" /> Place order</>}
                     </button>
                   </div>
                 </>

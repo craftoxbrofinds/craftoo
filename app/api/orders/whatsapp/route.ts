@@ -140,7 +140,7 @@ export async function POST(req: Request) {
     if (same) {
       const sameCouponId: string | null = same.game_coupon_id ?? null
       if ((coupon?.id ?? null) !== sameCouponId) {
-        return conflict('duplicate', `You’ve already placed an order for these items (order ${orderRef(same)}). Our team will confirm it on WhatsApp. To change it, message us about that order.`, {
+        return conflict('duplicate', `You’ve already placed an order for these items (order ${orderRef(same)}). Our team will contact you to confirm it. To change it, contact us about that order.`, {
           order: { id: same.id, ref: orderRef(same), status: same.status, createdAt: same.created_at, couponCode: null },
         })
       }
