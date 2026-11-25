@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   ShoppingBag, Zap, Heart, ChevronLeft, ChevronRight,
-  Shield, RotateCcw, Truck, BadgeCheck, Package, Tag, ArrowLeft,
+  Tag, ArrowLeft,
 } from 'lucide-react'
 import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
@@ -69,16 +69,16 @@ export default function ProductDetailPage() {
       const { data } = await res.json()
       setProduct(data)
 
-      // fetch related: same category, excluding current product
-      if (data?.category_id) {
-        const allRes = await fetch('/api/products')
-        if (allRes.ok) {
-          const { data: all } = await allRes.json()
-          const others = (all as Product[]).filter(
-            p => p.category_id === data.category_id && p.id !== data.id
-          ).slice(0, 6)
-          setRelated(others)
+      // fetch related: a random mix from every category, excluding the current product
+      const allRes = await fetch('/api/products')
+      if (allRes.ok) {
+        const { data: all } = await allRes.json()
+        const others = ((all ?? []) as Product[]).filter(p => p.id !== data?.id)
+        for (let i = others.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1))
+          ;[others[i], others[j]] = [others[j], others[i]]
         }
+        setRelated(others.slice(0, 8))
       }
 
       setLoading(false)
@@ -373,21 +373,6 @@ export default function ProductDetailPage() {
                 Buy Now
               </motion.button>
             </div>
-
-            {/* Trust row */}
-            <div className="grid grid-cols-2 gap-2">
-              {[
-                { Icon: Shield,     label: 'Secure Payment' },
-                { Icon: RotateCcw,  label: '7-Day Returns' },
-                { Icon: Truck,      label: 'Free Shipping ₹1,000+' },
-                { Icon: BadgeCheck, label: 'Handmade With Care' },
-              ].map(({ Icon, label }) => (
-                <div key={label} className="flex items-center gap-2 px-3 py-2.5 bg-white border border-border-light">
-                  <Icon size={12} className="text-deep-gold shrink-0" />
-                  <span className="font-syndicatgrotesk text-[9px] tracking-[0.1em] uppercase text-text-muted">{label}</span>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
 
@@ -433,14 +418,6 @@ export default function ProductDetailPage() {
                     </div>
                   ))}
                 </div>
-
-                {/* Shipping note */}
-                <div className="mt-5 flex items-start gap-2.5 p-3 bg-soft-cream border border-border-light">
-                  <Package size={13} className="text-deep-gold shrink-0 mt-0.5" />
-                  <p className="font-syndicatgrotesk text-[10px] text-text-muted leading-relaxed">
-                    Ships within 2–5 business days. Free delivery on orders of ₹1,000 and above.
-                  </p>
-                </div>
               </div>
             </div>
           </div>
@@ -460,15 +437,6 @@ export default function ProductDetailPage() {
                   <div className="w-10 h-px bg-deep-gold/40" />
                 </div>
               </div>
-              {product.categories && (
-                <Link
-                  href={`/category/${product.categories.slug}`}
-                  className="hidden sm:flex items-center gap-1.5 font-syndicatgrotesk text-[10px] tracking-[0.18em] uppercase text-text-muted hover:text-deep-gold transition-colors"
-                >
-                  View All
-                  <ChevronRight size={12} />
-                </Link>
-              )}
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
@@ -491,19 +459,6 @@ export default function ProductDetailPage() {
                 </motion.div>
               ))}
             </div>
-
-            {/* Mobile view all */}
-            {product.categories && (
-              <div className="mt-8 flex justify-center sm:hidden">
-                <Link
-                  href={`/category/${product.categories.slug}`}
-                  className="flex items-center gap-2 px-8 py-3 border border-site-black/20 font-syndicatgrotesk text-[10px] tracking-[0.2em] uppercase text-warm-black hover:border-deep-gold hover:text-deep-gold transition-colors"
-                >
-                  View All {product.categories.name}
-                  <ChevronRight size={12} />
-                </Link>
-              </div>
-            )}
           </div>
         )}
       </div>

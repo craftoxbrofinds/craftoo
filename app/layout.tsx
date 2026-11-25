@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { CookieConsent } from '@/components/cookie-consent'
 import { StaleBuildReload } from '@/components/stale-build-reload'
+import { CopyProtection } from '@/components/copy-protection'
 import './globals.css'
 import localFont from "next/font/local";
 import { getSiteSettingServer } from '@/lib/site-settings'
@@ -90,6 +91,7 @@ export default function RootLayout({
         {/* Loads analytics only after the visitor accepts it. */}
         <CookieConsent />
         <StaleBuildReload />
+        <CopyProtection />
       </body>
     </html>
   )

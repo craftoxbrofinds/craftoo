@@ -136,6 +136,26 @@
     @apply bg-background text-foreground;
   }
 
+  /* Storefront copy protection (set by components/copy-protection.tsx; off on /admin). */
+  html.copy-protected body {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none; /* no long-press "Save image" / "Copy" menu on iPhone */
+  }
+
+  html.copy-protected img {
+    -webkit-user-drag: none;
+  }
+
+  html.copy-protected input,
+  html.copy-protected textarea,
+  html.copy-protected select,
+  html.copy-protected [contenteditable='true'] {
+    -webkit-user-select: text;
+    user-select: text;
+    -webkit-touch-callout: default;
+  }
+
   h1,
   h2,
   h3,
