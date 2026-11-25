@@ -861,9 +861,9 @@ export default function CheckoutPage() {
                       type="button"
                       onClick={sendOrder}
                       disabled={sending}
-                      className={`inline-flex flex-1 items-center justify-center gap-2 px-6 py-4 font-syndicatgrotesk text-[11px] font-bold uppercase tracking-[0.22em] text-white transition-colors disabled:opacity-60 ${
-                        whatsappCheckout ? 'bg-[#1f8f4e] hover:bg-[#177a41]' : 'bg-site-black hover:bg-deep-gold'
-                      }`}
+                      className={whatsappCheckout
+                        ? 'inline-flex flex-1 items-center justify-center gap-2 bg-[#1f8f4e] px-6 py-4 font-syndicatgrotesk text-[11px] font-bold uppercase tracking-[0.22em] text-white transition-colors hover:bg-[#177a41] disabled:opacity-60'
+                        : `${primaryBtn} flex-1`}
                     >
                       {whatsappCheckout
                         ? sending
