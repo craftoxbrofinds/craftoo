@@ -10,11 +10,13 @@ const _pending = new Map<string, Promise<any>>()
 function loadSetting<K extends keyof SettingsMap>(key: K): Promise<SettingsMap[K]> {
   if (_cache.has(key)) return Promise.resolve(_cache.get(key))
   if (!_pending.has(key)) {
-    const p = supabase
-      .from('site_settings')
-      .select('value')
-      .eq('key', key)
-      .single()
+    const p = Promise.resolve(
+      supabase
+        .from('site_settings')
+        .select('value')
+        .eq('key', key)
+        .single()
+    )
       .then(({ data }) => {
         const val = data?.value
           ? { ...SETTING_DEFAULTS[key], ...(data.value as SettingsMap[K]) }

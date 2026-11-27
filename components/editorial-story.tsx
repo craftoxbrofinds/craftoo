@@ -148,7 +148,7 @@ export function EditorialStory() {
                   className="border-l-2 border-rich-gold/50 pl-4 py-1 hover:border-rich-gold transition-colors duration-200"
                 >
                   <p className="font-brandon text-xl font-black text-rich-gold leading-none">
-                    {item.raw ? item.suffix : <CountUp target={item.stat} suffix={item.suffix} />}
+                    <CountUp target={item.stat} suffix={item.suffix} />
                   </p>
                   <p className="font-syndicatgrotesk text-[9px] tracking-[0.2em] uppercase text-muted-taupe/80 mt-1">{item.label}</p>
                 </motion.div>
