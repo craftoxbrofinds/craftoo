@@ -18,6 +18,10 @@ Never prefix the secret ones with `NEXT_PUBLIC_`, or they are sent to every brow
 | `GAME_SESSION_SECRET` | **Flower Quest**: signs game runs and guest cookies | **Yes** | At least 32 characters. Make one with `openssl rand -hex 32`. Without it the game shows "Game session service is not configured". Changing it later logs out guest play counters and cancels games in progress. |
 | `FILE_STORAGE_API_KEY` | **Image uploads** (admin product images, customer photos) | **Yes** | Must be exactly the same key as on the file server (section 3). |
 | `FILE_STORAGE_URL` | Image uploads | No | Optional. Defaults to `https://nayanfood.in/craftoo/files`. |
+| `NEXT_PUBLIC_SITE_URL` | Sitemap, robots.txt, page metadata | No | Optional. The store's public address, e.g. `https://craftoo.in`. Used when **Admin → Settings → Site URL** is empty; if both are empty, Vercel's production domain is used. |
+| `NEXT_PUBLIC_SENTRY_DSN` | **Sentry** error tracking, traces and logs | No | `https://02ef11bbad209d163b137f0f382fe5eb@o4512504882593792.ingest.de.sentry.io/4512504893931600` (project `craftoo/craftoo-web`). Without it, Sentry stays off. |
+| `SENTRY_AUTH_TOKEN` | Sentry source maps (readable production stack traces) | **Yes** | Sentry → Settings → Auth Tokens → organization token. Only needed at build time. |
+| `LOG_LEVEL` | Server logs | No | Optional. `debug`, `info`, `warn` or `error`. Defaults to `info` in production. Logs are JSON lines in Vercel → Logs. |
 | `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET` | Online payment | Yes | **Not needed now**. Orders go through WhatsApp. Only for a future payment gateway. |
 
 After adding or changing variables, **redeploy**. Vercel only reads them at build/start.

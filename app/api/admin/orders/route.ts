@@ -5,6 +5,9 @@ import { parseDbTime } from '@/lib/flower-quest/coupon-orders'
 import { parseOrderAddress } from '@/lib/order-address'
 import { loadOrderCharges } from '@/lib/order-charges-server'
 import { chargesTotal } from '@/lib/order-charges'
+import { logger } from '@/lib/logger'
+
+const log = logger.child({ route: 'admin/orders' })
 
 export async function GET(req: Request) {
     if (!(await isAdmin(req))) {
@@ -19,7 +22,7 @@ export async function GET(req: Request) {
     let coupons = new Map<string, { code: string; status: string }>()
     if (couponIds.length > 0) {
         const { data, error } = await client.from('discount_coupons').select('id, code, status').in('id', couponIds)
-        if (error) console.error('Could not load order coupons', error)
+        if (error) log.error('Could not load order coupons', { error })
         coupons = new Map((data ?? []).map(c => [c.id, { code: c.code, status: c.status }]))
     }
     const charges = await loadOrderCharges(client, orders.map((order: any) => order.id))

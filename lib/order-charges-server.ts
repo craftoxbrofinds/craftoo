@@ -1,6 +1,7 @@
 import 'server-only'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import type { OrderCharge } from '@/lib/order-charges'
+import { logger } from '@/lib/logger'
 
 /**
  * Extra charges for the given orders, by order id. If the order_charges table doesn't exist
@@ -15,7 +16,7 @@ export async function loadOrderCharges(supabase: SupabaseClient, orderIds: strin
     .in('order_id', orderIds)
     .order('created_at', { ascending: true })
   if (error) {
-    console.warn('Order charges unavailable (has the order_charges migration run?)', error.message)
+    logger.warn('Order charges unavailable (has the order_charges migration run?)', { error })
     return byOrder
   }
   for (const row of data ?? []) {

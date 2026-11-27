@@ -2,6 +2,9 @@ import { randomUUID } from 'crypto'
 import { ApiError, getOptionalUser, handleApiError } from '@/lib/flower-quest/server'
 import { MAX_GIFT_PHOTO_BYTES, MAX_UPLOAD_MB } from '@/lib/gift-extras'
 import { FileStorageError, putFile } from '@/lib/file-storage'
+import { logger } from '@/lib/logger'
+
+const log = logger.child({ route: 'uploads/gift-photos' })
 
 /** Detects the image type from the file's first bytes; the browser's stated type isn't trusted. */
 function detectImage(bytes: Uint8Array): { ext: string; type: string } | null {
@@ -35,10 +38,11 @@ export async function POST(req: Request) {
     try {
       url = await putFile(`gift-${randomUUID()}.${image.ext}`, bytes, image.type)
     } catch (error) {
-      if (error instanceof FileStorageError) console.error('Gift photo upload failed', error.message)
+      log.error('Gift photo upload failed', { userId: user.id, bytes: file.size, error: error instanceof FileStorageError ? error.message : error })
       throw new ApiError('Your photo couldn’t be uploaded just now. Please try again.', 502)
     }
 
+    log.info('Gift photo uploaded', { userId: user.id, bytes: file.size, type: image.type })
     return Response.json({ url }, { headers: { 'Cache-Control': 'no-store' } })
   } catch (error) {
     return handleApiError(error, 'Gift photo upload failed', 'Your photo couldn’t be uploaded just now. Please try again.')

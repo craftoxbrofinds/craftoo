@@ -9,6 +9,9 @@ import { checkCustomerDetails } from '@/lib/customer-details'
 import { saveCustomerDetails } from '@/lib/customer-details-server'
 import { CartService } from '@/services/cart.service'
 import { FILE_STORAGE_URL as fileServiceUrl } from '@/lib/file-storage'
+import { logger } from '@/lib/logger'
+
+const log = logger.child({ route: 'orders/whatsapp' })
 
 
 /** A photo uploaded through /api/uploads/gift-photos (a plain file name on our file storage). */
@@ -82,10 +85,10 @@ export async function POST(req: Request) {
 
     // Remember these details on the profile for next time. A failure here never blocks the order.
     const rememberDetails = () => saveCustomerDetails(user.id, checked.details)
-      .catch(error => console.error('Could not save checkout details to the profile', error))
+      .catch(error => log.error('Could not save checkout details to the profile', { userId: user.id, error }))
     // The order now holds the items, so the cart is emptied. A failure here never blocks the order.
     const emptyCart = () => CartService.clearUserCart(user.id, supabase)
-      .catch(error => console.error('Could not empty the cart after a WhatsApp order', error))
+      .catch(error => log.error('Could not empty the cart after a WhatsApp order', { userId: user.id, error }))
     if (couponCode && !COUPON_CODE_PATTERN.test(couponCode)) {
       throw new ApiError('Enter a valid coupon code. It uses letters, numbers and dashes only.', 400)
     }
@@ -162,6 +165,7 @@ export async function POST(req: Request) {
         total: Number(same.total),
         coupon: linked ? { code: linked.code, discountPercent: linked.discount_percent } : null,
       }
+      log.info('WhatsApp order resent; existing order reused', { orderId: same.id, ref: placed.ref, userId: user.id })
       await Promise.all([rememberDetails(), emptyCart()])
       return Response.json(placed, { headers: noStore })
     }
@@ -242,12 +246,12 @@ export async function POST(req: Request) {
     } catch (error) {
       if (order) {
         const { error: cancelError } = await supabase.from('orders').update({ status: 'cancelled' }).eq('id', order.id)
-        if (cancelError) console.error('Could not cancel incomplete WhatsApp order', cancelError)
+        if (cancelError) log.error('Could not cancel incomplete WhatsApp order', { orderId: order.id, error: cancelError })
       }
       if (coupon) {
         const { error: releaseError } = await supabase
           .from('discount_coupons').update({ status: 'available' }).eq('id', coupon.id).eq('status', 'reserved')
-        if (releaseError) console.error('Could not release coupon after WhatsApp order failure', releaseError)
+        if (releaseError) log.error('Could not release coupon after WhatsApp order failure', { couponId: coupon.id, error: releaseError })
       }
       throw error
     }
@@ -261,6 +265,7 @@ export async function POST(req: Request) {
       total,
       coupon: coupon ? { code: coupon.code, discountPercent } : null,
     }
+    log.info('WhatsApp order placed', { orderId: order.id, ref: placed.ref, userId: user.id, items: cart.lines.length, subtotal: cart.subtotal, discountAmount, total, couponUsed: Boolean(coupon) })
     await Promise.all([rememberDetails(), emptyCart()])
     return Response.json(placed, { headers: noStore })
   } catch (error) {

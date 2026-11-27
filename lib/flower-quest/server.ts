@@ -2,6 +2,7 @@ import 'server-only'
 import { createHash, createHmac, randomUUID, timingSafeEqual } from 'crypto'
 import { createClient, type User } from '@supabase/supabase-js'
 import { createAdminClient } from '@/lib/supabase-admin'
+import { logger } from '@/lib/logger'
 
 export const FLOWER_QUEST_CAMPAIGN = 'flower-quest'
 
@@ -108,8 +109,11 @@ export function handleApiError(
   publicMessage = 'Something went wrong. Please try again in a moment.',
 ): Response {
   if (error instanceof ApiError) {
+    // 5xx ApiErrors mean missing configuration or a dependency being down, which someone should see.
+    if (error.status >= 500) logger.warn(label, { status: error.status, reason: error.message })
+    else logger.debug(label, { status: error.status, reason: error.message })
     return Response.json({ error: error.message }, { status: error.status })
   }
-  console.error(label, error)
+  logger.error(label, { error })
   return Response.json({ error: publicMessage }, { status: 500 })
 }

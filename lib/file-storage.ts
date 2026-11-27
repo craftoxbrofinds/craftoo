@@ -1,4 +1,5 @@
 import 'server-only'
+import { logger } from '@/lib/logger'
 
 /**
  * Uploads to our file storage (nayanfood.in/craftoo/files, see deploy/file-storage/index.php).
@@ -35,7 +36,7 @@ export async function putFile(fileName: string, body: ArrayBuffer | Uint8Array, 
   })
   const result = await response.json().catch(() => ({})) as { storedFileName?: string; error?: string }
   if (!response.ok) {
-    console.error('File storage upload failed', response.status, result.error)
+    logger.error('File storage upload failed', { fileName, httpStatus: response.status, reason: result.error })
     throw new FileStorageError(result.error || 'Remote file upload failed', 502)
   }
   return `${FILE_STORAGE_URL}/${encodeURIComponent(result.storedFileName || fileName)}`

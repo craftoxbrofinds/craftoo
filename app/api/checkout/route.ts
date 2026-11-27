@@ -2,6 +2,9 @@ import { createClient } from '@supabase/supabase-js'
 import { CartService } from '@/services/cart.service'
 import { createAdminClient } from '@/lib/supabase-admin'
 import Razorpay from 'razorpay'
+import { logger } from '@/lib/logger'
+
+const log = logger.child({ route: 'checkout' })
 
 class CheckoutError extends Error {
   constructor(message: string, public readonly status: number) {
@@ -158,6 +161,7 @@ export async function POST(req: Request) {
         .eq('status', 'pending')
       if (updateError) throw updateError
 
+      log.info('Checkout order created', { orderId: order.id, userId: user.id, subtotal, discountAmount, total, couponUsed: couponReserved })
       return Response.json({
         success: true,
         orderId: order.id,
@@ -177,7 +181,7 @@ export async function POST(req: Request) {
           p_order_id: order.id,
           p_user_id: user.id,
         })
-        if (releaseError) console.error('Could not release coupon after checkout failure', releaseError)
+        if (releaseError) log.error('Could not release coupon after checkout failure', { orderId: order.id, error: releaseError })
       }
       const { error: cancelError } = await supabase
         .from('orders')
@@ -185,14 +189,15 @@ export async function POST(req: Request) {
         .eq('id', order.id)
         .eq('user_id', user.id)
         .eq('status', 'pending')
-      if (cancelError) console.error('Could not cancel incomplete checkout order', cancelError)
+      if (cancelError) log.error('Could not cancel incomplete checkout order', { orderId: order.id, error: cancelError })
       throw error
     }
   } catch (error) {
     if (error instanceof CheckoutError) {
+      if (error.status >= 500) log.warn('Checkout unavailable', { status: error.status, reason: error.message })
       return Response.json({ error: error.message }, { status: error.status })
     }
-    console.error('Checkout failed', error)
+    log.error('Checkout failed', { error })
     return Response.json({ error: 'Checkout could not be completed' }, { status: 500 })
   }
 }

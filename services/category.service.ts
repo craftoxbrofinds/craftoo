@@ -1,4 +1,5 @@
 import { categoryRepository } from "@/repositories/category.repo";
+import { logger } from "@/lib/logger";
 
 export type Category = {
     id: string;
@@ -14,7 +15,7 @@ export const categoryService = {
             const data = await categoryRepository.getAll();
             return data.data as Category[];
         } catch (error: any) {
-            console.error("Failed to fetch categories:", error.message);
+            logger.error("Failed to fetch categories", { error });
             throw new Error(error.message || "Unable to fetch categories");
         }
     },

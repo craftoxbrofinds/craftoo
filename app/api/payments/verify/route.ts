@@ -6,6 +6,7 @@ import {
   getServiceClient,
   handleApiError,
 } from '@/lib/flower-quest/server'
+import { logger } from '@/lib/logger'
 
 function isValidSignature(expected: string, provided: unknown): provided is string {
   if (typeof provided !== 'string' || !/^[a-f0-9]{64}$/i.test(provided)) return false
@@ -81,6 +82,7 @@ export async function POST(req: Request) {
       throw new Error('Payment could not be finalized')
     }
 
+    logger.info('Payment verified', { route: 'payments/verify', orderId: order.id, userId: user.id, amount: Number(order.total), alreadyPaid: order.status === 'paid' })
     return Response.json({ success: true, orderId: order.id }, { headers: { 'Cache-Control': 'no-store' } })
   } catch (error) {
     return handleApiError(error, 'Payment verification failed')

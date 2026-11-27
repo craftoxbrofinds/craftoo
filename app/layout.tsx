@@ -5,6 +5,7 @@ import { CopyProtection } from '@/components/copy-protection'
 import './globals.css'
 import localFont from "next/font/local";
 import { getSiteSettingServer } from '@/lib/site-settings'
+import { resolveSiteUrl } from '@/lib/site-url'
 
 const brandon = localFont({
   src: [
@@ -50,7 +51,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   const title = seo.title || brand.name || 'Craftoo'
   const description = seo.description || 'Free shipping on orders of ₹1,000 and above, and easy returns.'
-  const siteUrl = brand.site_url || 'https://example.com'
+  const siteUrl = resolveSiteUrl(brand.site_url)
   // There is no /favicon.ico, so fall back to the round Craftoo logo when settings don't set one.
   const favicon = brand.favicon_url || '/images/logo/craftoo-logo-round-256.png'
 
