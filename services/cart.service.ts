@@ -23,8 +23,11 @@ export const CartService = {
         if (!cart) throw new Error('Cart not found')
         const cartId = cart.id
 
-        const { data: product } = await CartRepo.getProductStock(productId, client)
-        const stock: number | null = product?.stock ?? null
+        const { data: product, error: productError } = await CartRepo.getProductStock(productId, client)
+        if (productError) throw new Error(`Could not load product: ${productError.message}`)
+        // The cart API uses the service role, so hidden products must be refused here, not by RLS.
+        if (!product || product.is_active === false) throw new Error('This item is no longer available')
+        const stock: number | null = product.stock ?? null
 
         const { data: existingItem } = await CartRepo.getCartItem(cartId, productId, client)
         const currentQty = existingItem?.quantity ?? 0
@@ -60,7 +63,8 @@ export const CartService = {
         if (itemError || !itemRow) throw new Error('Cart item was not found')
         if (itemRow?.product_id) {
             const { data: product } = await CartRepo.getProductStock(itemRow.product_id, client)
-            const stock: number | null = product?.stock ?? null
+            if (!product || product.is_active === false) throw new Error('This item is no longer available')
+            const stock: number | null = product.stock ?? null
             if (stock !== null && quantity > stock) {
                 throw new Error(stock === 0 ? 'This item is out of stock' : 'Requested quantity is not available')
             }

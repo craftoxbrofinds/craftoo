@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "eslint .",
     "type-check": "tsc --noEmit",
-    "test:game": "tsx --test lib/flower-quest/simulation.test.ts lib/flower-quest/coupon.test.ts"
+    "test": "npm run test:game && npm run test:cart",
+    "test:game": "tsx --test lib/flower-quest/simulation.test.ts lib/flower-quest/coupon.test.ts",
+    "test:cart": "tsx --test services/cart.service.test.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",

@@ -21,6 +21,11 @@ export async function getCartSummary(supabase: SupabaseClient, userId: string): 
     ? (cart as { cart_items: unknown[] }).cart_items
     : []
   if (!raw.every(isCartLine)) throw new ApiError('Your cart contains an item that could not be priced.', 400)
+  const hidden = (raw as CartLine[]).find(line => (line.products as { is_active?: unknown }).is_active === false)
+  if (hidden) {
+    const name = typeof hidden.products.name === 'string' ? hidden.products.name : 'An item'
+    throw new ApiError(`${name} is no longer available. Remove it from your cart to continue.`, 400)
+  }
 
   let subtotalPaise = 0
   const lines = (raw as CartLine[]).map(line => {

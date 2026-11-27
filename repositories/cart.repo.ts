@@ -11,7 +11,7 @@ export const CartRepo = {
                     id,
                     quantity,
                     products (
-                        id, name, price, image, stock
+                        id, name, price, image, stock, is_active
                     )
                 )
             `)
@@ -45,9 +45,9 @@ export const CartRepo = {
     async getProductStock(productId: string, client: SupabaseClient) {
         return client
             .from('products')
-            .select('stock')
+            .select('stock, is_active')
             .eq('id', productId)
-            .single()
+            .maybeSingle()
     },
 
     async getCartItemById(cartItemId: string, cartId: string, client: SupabaseClient) {
