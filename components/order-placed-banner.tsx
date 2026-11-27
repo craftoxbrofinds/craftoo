@@ -49,7 +49,9 @@ export function OrderPlacedBanner() {
         <CheckCircle2 size={22} className="hidden shrink-0 text-green-700 sm:block" aria-hidden="true" />
         <div className="min-w-0 flex-1 font-syndicatgrotesk text-sm text-green-900">
           <p className="font-semibold">
-            Order <span className="font-mono">{order.ref}</span> placed. Your cart has been cleared.
+            {order.existing
+              ? <>You’d already placed this order, so we kept order <span className="font-mono">{order.ref}</span> and didn’t make a second one. Your cart has been cleared.</>
+              : <>Order <span className="font-mono">{order.ref}</span> placed. Your cart has been cleared.</>}
           </p>
           <p className="mt-0.5 text-xs leading-5 text-green-800">
             {order.whatsappOpened

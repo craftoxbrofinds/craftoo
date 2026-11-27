@@ -27,4 +27,11 @@ export const WHATSAPP_NUMBER = '919148997472'
  * reopen WhatsApp if the message didn't go out.
  */
 export const LAST_ORDER_KEY = 'craftoo:last-order'
-export type LastOrder = { ref: string; whatsappUrl: string; whatsappOpened: boolean; at: number }
+export type LastOrder = {
+  ref: string
+  whatsappUrl: string
+  whatsappOpened: boolean
+  at: number
+  /** True when the shopper sent an order they had already placed, so no new order was made. */
+  existing?: boolean
+}

@@ -21,6 +21,7 @@ function SuccessContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const orderId = searchParams.get('orderId')
+  const existing = searchParams.get('existing') === '1'
 
   const [order, setOrder] = useState<any>(null)
   const [loading, setLoading] = useState(true)
@@ -77,7 +78,9 @@ function SuccessContent() {
           Thank You!
         </h1>
         <p className="font-syndicatgrotesk text-sm text-muted-taupe leading-relaxed">
-          Your order has been placed. The Craftoo team will contact you soon to confirm your order and the final bill.
+          {existing
+            ? 'You’d already placed this order with the same items and delivery details, so we kept that order and didn’t make a second one. The Craftoo team will contact you soon to confirm it and the final bill.'
+            : 'Your order has been placed. The Craftoo team will contact you soon to confirm your order and the final bill.'}
         </p>
       </div>
 

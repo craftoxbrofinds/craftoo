@@ -376,7 +376,7 @@ export default function CheckoutPage() {
         // The order is saved; staff will contact the shopper. Show the order placed screen.
         clearCart()
         useGiftExtras.getState().keepOnly([])
-        router.replace(`/orders/success?orderId=${encodeURIComponent(placed.orderId)}`)
+        router.replace(`/orders/success?orderId=${encodeURIComponent(placed.orderId)}${placed.existing ? '&existing=1' : ''}`)
         return
       }
 
@@ -392,7 +392,7 @@ export default function CheckoutPage() {
       clearCart()
       useGiftExtras.getState().keepOnly([])
       try {
-        const last: LastOrder = { ref: placed.ref, whatsappUrl, whatsappOpened, at: Date.now() }
+        const last: LastOrder = { ref: placed.ref, whatsappUrl, whatsappOpened, at: Date.now(), existing: placed.existing }
         sessionStorage.setItem(LAST_ORDER_KEY, JSON.stringify(last))
       } catch { /* storage unavailable: the home page just won't show the confirmation */ }
 

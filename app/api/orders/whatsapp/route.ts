@@ -29,8 +29,10 @@ function isGiftPhotoUrl(url: string): boolean {
  *
  * Duplicates are refused:
  * - A coupon already on an order that is not cancelled can't be used for another order.
- * - Sending the same items again while that order is still pending (for example because WhatsApp
- *   didn't open the first time) returns the existing order instead of creating a second one.
+ * - Sending exactly the same order again (same items, gift extras and delivery details) while the
+ *   first is still pending, for example because WhatsApp didn't open, returns the existing order
+ *   instead of creating a second one. The response says so with `existing: true`. An order that
+ *   differs in any of these, such as the same gift for another address, is created as a new order.
  *
  * The shopper's reviewed total is sent as `expectedTotal`; if the server's figure differs, nothing
  * is created and the new figures are returned so the shopper can check them first.
@@ -44,8 +46,11 @@ const SAME_ORDER_WINDOW_MS = 24 * 60 * 60 * 1000
 
 const toPaise = (value: number) => Math.round(value * 100)
 
-const signatureOf = (lines: { productId: string; quantity: number }[]) =>
-  lines.map(line => `${line.productId}:${line.quantity}`).sort().join('|')
+type OrderLine = { productId: string; quantity: number; extras: string[]; photos: string[] }
+
+/** Items, quantities and gift extras (with photos) of an order, in a form that can be compared. */
+const signatureOf = (lines: OrderLine[]) =>
+  lines.map(line => JSON.stringify([line.productId, line.quantity, [...line.extras].sort(), [...line.photos].sort()])).sort().join('\n')
 
 function conflict(reason: string, error: string, extra: Record<string, unknown> = {}) {
   return Response.json({ error, reason, ...extra }, { status: 409, headers: noStore })
@@ -125,11 +130,13 @@ export async function POST(req: Request) {
       return Response.json({ error: 'This coupon code isn’t valid for your account. Check the code and try again.', reason: 'not-found' }, { status: 422, headers: noStore })
     }
 
-    // 1. The same items sent again while the first order is pending: reuse that order.
+    // 1. The same order sent again while the first one is pending (same items, gift extras and
+    //    delivery details): reuse that order. Anything different, such as the same gift going to
+    //    another address, is a new order and never changes the earlier one.
     const since = new Date(Date.now() - SAME_ORDER_WINDOW_MS).toISOString()
     const { data: recent, error: recentError } = await supabase
       .from('orders')
-      .select('id, order_number, status, created_at, subtotal, discount_amount, total, game_coupon_id, order_items(id, product_id, quantity)')
+      .select('id, order_number, status, created_at, subtotal, discount_amount, total, address, game_coupon_id, order_items(product_id, quantity, gift_extras, gift_photos)')
       .eq('user_id', user.id)
       .eq('status', 'pending')
       .is('razorpay_order_id', null)
@@ -137,23 +144,27 @@ export async function POST(req: Request) {
       .order('created_at', { ascending: false })
     if (recentError) throw recentError
 
-    const signature = signatureOf(cart.lines)
+    type StoredItem = { product_id: string; quantity: number; gift_extras: string[] | null; gift_photos: string[] | null }
+    const signature = signatureOf(cart.lines.map(line => ({
+      productId: line.productId,
+      quantity: line.quantity,
+      extras: extrasFor(line.productId),
+      photos: photosFor(line.productId),
+    })))
     const same = (recent ?? []).find(order =>
-      signatureOf((order.order_items ?? []).map((item: { product_id: string; quantity: number }) => ({ productId: item.product_id, quantity: item.quantity }))) === signature)
+      order.address === formattedAddress &&
+      signatureOf(((order.order_items ?? []) as StoredItem[]).map(item => ({
+        productId: item.product_id,
+        quantity: item.quantity,
+        extras: item.gift_extras ?? [],
+        photos: item.gift_photos ?? [],
+      }))) === signature)
     if (same) {
       const sameCouponId: string | null = same.game_coupon_id ?? null
       if ((coupon?.id ?? null) !== sameCouponId) {
         return conflict('duplicate', `You’ve already placed an order for these items (order ${orderRef(same)}). Our team will contact you to confirm it. To change it, contact us about that order.`, {
           order: { id: same.id, ref: orderRef(same), status: same.status, createdAt: same.created_at, couponCode: null },
         })
-      }
-      // Keep the latest delivery details on the existing order.
-      const { error: addressError } = await supabase.from('orders').update({ address: formattedAddress }).eq('id', same.id).eq('status', 'pending')
-      if (addressError) throw addressError
-      // ...and the latest gift extras on its items.
-      for (const item of (same.order_items ?? []) as { id: string; product_id: string }[]) {
-        const { error: extrasError } = await supabase.from('order_items').update({ gift_extras: extrasFor(item.product_id), gift_photos: photosFor(item.product_id) }).eq('id', item.id)
-        if (extrasError) throw extrasError
       }
       const linked = sameCouponId ? await couponById(supabase, sameCouponId) : null
       const placed: PlacedOrder = {
