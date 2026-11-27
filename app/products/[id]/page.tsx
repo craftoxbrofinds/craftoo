@@ -10,8 +10,7 @@ import {
 import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
 import { ProductCard } from '@/components/product-card'
-import { useCartStore } from '@/store/cart'
-import { useGiftExtras } from '@/store/gift-extras'
+import { addToCartWithPopup, useCartStore } from '@/store/cart'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 
@@ -57,7 +56,6 @@ export default function ProductDetailPage() {
   const [qty, setQty] = useState(1)
 
   const { addToCart } = useCartStore()
-  const showAdded = useGiftExtras(state => state.showAdded)
 
   useEffect(() => {
     setActiveImg(0)
@@ -96,15 +94,13 @@ export default function ProductDetailPage() {
       return
     }
     try {
-      await addToCart(session.access_token, id, qty)
-      if (redirect) {
-        router.push('/checkout')
+      if (redirect || !product) {
+        await addToCart(session.access_token, id, qty)
+        if (redirect) router.push('/checkout')
       } else {
+        await addToCartWithPopup(session.access_token, { id, name: product.name, price: product.price, image: getFirstImage(product.image), quantity: qty })
         setAddedFeedback(true)
         setTimeout(() => setAddedFeedback(false), 2000)
-        if (product) {
-          showAdded({ id, name: product.name, price: product.price, image: getFirstImage(product.image), quantity: qty })
-        }
       }
     } catch (err: any) {
       alert(err.message)

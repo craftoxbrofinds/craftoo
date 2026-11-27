@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { useGiftExtras } from '@/store/gift-extras'
+import { useGiftExtras, type AddedProduct } from '@/store/gift-extras'
 
 export interface CartItem {
     id: string
@@ -127,3 +127,22 @@ export const useCartStore = create<CartState>((set) => ({
     
     clearCart: () => set({ items: [] })
 }))
+
+/**
+ * Opens the "added to cart" popup straight away so the shopper can pick gift extras while the
+ * item is saved. If saving fails, the popup closes, any extras just ticked for a product that
+ * isn't in the cart are dropped, and the error is thrown for the caller to show.
+ */
+export async function addToCartWithPopup(token: string, product: Omit<AddedProduct, 'pending'>) {
+    const gift = useGiftExtras.getState()
+    gift.showAdded({ ...product, pending: true })
+    try {
+        await useCartStore.getState().addToCart(token, product.id, product.quantity)
+        useGiftExtras.getState().confirmAdded(product.id)
+    } catch (error) {
+        const state = useGiftExtras.getState()
+        if (state.added?.id === product.id) state.closeAdded()
+        if (!useCartStore.getState().items.some(item => item.product.id === product.id)) state.clear(product.id)
+        throw error
+    }
+}

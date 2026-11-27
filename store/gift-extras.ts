@@ -10,7 +10,8 @@ import { GIFT_EXTRAS, MAX_GIFT_PHOTOS, type GiftExtraKey, type GiftExtras } from
  */
 export { GIFT_EXTRAS, describeGiftExtras, type GiftExtraKey, type GiftExtras } from '@/lib/gift-extras'
 
-export type AddedProduct = { id: string; name: string; price: number; image?: string; quantity: number }
+/** `pending` is true while the add is still being saved; the popup opens straight away regardless. */
+export type AddedProduct = { id: string; name: string; price: number; image?: string; quantity: number; pending?: boolean }
 
 type GiftExtrasState = {
   /** The account these extras belong to. */
@@ -29,6 +30,8 @@ type GiftExtrasState = {
   /** Ties the extras to the signed-in account; a different account (or signing out) starts empty. */
   setOwner: (userId: string | null) => void
   showAdded: (product: AddedProduct) => void
+  /** Marks the popup's product as saved to the cart. */
+  confirmAdded: (productId: string) => void
   closeAdded: () => void
 }
 
@@ -89,6 +92,9 @@ export const useGiftExtras = create<GiftExtrasState>()(
         state.ownerId === userId ? state : { ownerId: userId, byProduct: {}, photos: {}, added: null }
       )),
       showAdded: product => set({ added: product }),
+      confirmAdded: productId => set(state => (
+        state.added?.id === productId && state.added.pending ? { added: { ...state.added, pending: false } } : state
+      )),
       closeAdded: () => set({ added: null }),
     }),
     {

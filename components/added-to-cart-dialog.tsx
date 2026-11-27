@@ -2,7 +2,7 @@
 
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { useRouter } from 'next/navigation'
-import { ArrowRight, Camera, Candy, Check, Phone, ShoppingBag, X } from 'lucide-react'
+import { ArrowRight, Camera, Candy, Check, Loader2, Phone, ShoppingBag, X } from 'lucide-react'
 import { useCartStore } from '@/store/cart'
 import { GIFT_EXTRAS, useGiftExtras, type GiftExtraKey } from '@/store/gift-extras'
 import { CUSTOMIZATION_CALL_NOTE } from '@/lib/gift-extras'
@@ -30,11 +30,17 @@ export function AddedToCartDialog() {
             <>
               {/* Header */}
               <div className="flex items-center gap-3 border-b border-border-light bg-soft-cream px-5 py-4">
-                <span className="added-tick grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#5f9a6d] text-white shadow-[0_6px_16px_rgba(95,154,109,.35)]">
-                  <Check size={19} strokeWidth={3} aria-hidden="true" />
-                </span>
-                <DialogPrimitive.Title className="flex-1 font-brandon text-sm font-black uppercase tracking-[0.14em] text-warm-black">
-                  Added to your cart
+                {added.pending ? (
+                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#ece6f5] text-[#7565a5]">
+                    <Loader2 size={18} className="animate-spin" aria-hidden="true" />
+                  </span>
+                ) : (
+                  <span className="added-tick grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#5f9a6d] text-white shadow-[0_6px_16px_rgba(95,154,109,.35)]">
+                    <Check size={19} strokeWidth={3} aria-hidden="true" />
+                  </span>
+                )}
+                <DialogPrimitive.Title aria-live="polite" className="flex-1 font-brandon text-sm font-black uppercase tracking-[0.14em] text-warm-black">
+                  {added.pending ? 'Adding to your cart…' : 'Added to your cart'}
                 </DialogPrimitive.Title>
                 <DialogPrimitive.Close className="p-1 text-text-muted transition-colors hover:text-warm-black" aria-label="Close">
                   <X size={18} />
@@ -116,14 +122,17 @@ export function AddedToCartDialog() {
                 </DialogPrimitive.Close>
                 <button
                   type="button"
+                  disabled={added.pending}
                   onClick={() => {
                     closeAdded()
                     openCart(false)
                     router.push('/checkout')
                   }}
-                  className="inline-flex items-center justify-center gap-1.5 bg-warm-black py-3.5 font-syndicatgrotesk text-[10px] font-bold uppercase tracking-[0.2em] text-white transition-colors hover:bg-deep-gold"
+                  className="inline-flex items-center justify-center gap-1.5 bg-warm-black py-3.5 font-syndicatgrotesk text-[10px] font-bold uppercase tracking-[0.2em] text-white transition-colors hover:bg-deep-gold disabled:opacity-60 disabled:hover:bg-warm-black"
                 >
-                  Checkout <ArrowRight size={13} aria-hidden="true" />
+                  {added.pending
+                    ? <><Loader2 size={13} className="animate-spin" aria-hidden="true" /> Adding…</>
+                    : <>Checkout <ArrowRight size={13} aria-hidden="true" /></>}
                 </button>
               </div>
             </>

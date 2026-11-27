@@ -881,6 +881,31 @@ export default function CheckoutPage() {
       </div>
 
       <Footer />
+
+      {/* Covers the page while the order is saved, so nothing can be tapped twice or changed. */}
+      {sending && (
+        <div
+          role="alertdialog"
+          aria-modal="true"
+          aria-labelledby="placing-order-title"
+          aria-describedby="placing-order-note"
+          className="fixed inset-0 z-[200] flex flex-col items-center justify-center gap-5 bg-warm-beige/95 px-6 text-center backdrop-blur-sm"
+        >
+          <span className="grid h-16 w-16 place-items-center rounded-full bg-white shadow-[0_12px_32px_rgba(63,58,70,.14)]">
+            <Loader2 size={30} className="animate-spin text-[#7565a5]" aria-hidden="true" />
+          </span>
+          <div>
+            <p id="placing-order-title" className="font-brandon text-xl font-black uppercase tracking-[0.12em] text-warm-black">
+              Placing your order…
+            </p>
+            <p id="placing-order-note" className="mt-2 max-w-xs font-syndicatgrotesk text-xs leading-5 text-text-muted">
+              {whatsappCheckout
+                ? 'Saving your order, then opening WhatsApp. Please don’t close or refresh this page.'
+                : 'Saving your order. Please don’t close or refresh this page.'}
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -3,8 +3,7 @@
 import { Heart, ShoppingBag, Zap } from 'lucide-react'
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { useCartStore } from '@/store/cart'
-import { useGiftExtras } from '@/store/gift-extras'
+import { addToCartWithPopup, useCartStore } from '@/store/cart'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 
@@ -38,7 +37,6 @@ export function ProductCard({
   const [adding, setAdding] = useState(false)
   const router = useRouter()
   const { addToCart } = useCartStore()
-  const showAdded = useGiftExtras(state => state.showAdded)
 
   const handleAddToCart = async (e: React.MouseEvent, redirect = false) => {
     e.stopPropagation()
@@ -51,9 +49,12 @@ export function ProductCard({
       return
     }
     try {
-      await addToCart(session.access_token, id, 1)
-      if (redirect) router.push('/checkout')
-      else showAdded({ id, name, price, image, quantity: 1 })
+      if (redirect) {
+        await addToCart(session.access_token, id, 1)
+        router.push('/checkout')
+      } else {
+        await addToCartWithPopup(session.access_token, { id, name, price, image, quantity: 1 })
+      }
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Could not add this item to your cart')
     } finally {
